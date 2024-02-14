@@ -397,7 +397,7 @@ export default function SubScribersTable({ rows, refCollection }) {
                         <DeleteForeverIcon
                           onClick={() => {
                             removeSubscriber(row.ID);
-                            setTriggerNum(triggerNum + 1);
+                            // setTriggerNum(triggerNum + 1);
                           }}
                           className="bg-danger text-white rounded-2 rounded deleteIcon border"
                         />
