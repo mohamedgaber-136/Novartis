@@ -106,8 +106,9 @@ export default function NewEvent() {
   const SendDataToFireBase = async () => {
     await addDoc(EventRefrence,newEvent).then(async(snapshot)=>{
 console.log(snapshot, 'snapshot event')
-const currentUserName = await getDoc(doc(database, 'users',currentUsr))
+const currentUserName = await getDoc(doc(database, 'Users',currentUsr))
 console.log(currentUserName,'current')
+console.log(currentUserName.data(),'current')
 
 
 const newNotificationObj={EventName:newEvent.EventName,

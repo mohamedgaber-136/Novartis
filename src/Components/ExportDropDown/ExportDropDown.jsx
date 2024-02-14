@@ -6,6 +6,8 @@ import Fade from '@mui/material/Fade';
 import ExportEventsExcel from '../ExportEventsExcel/ExportEventsExcel'
 import ExportSfda from "../ExportSfda/ExportSfda";
 export default function ExportDropDown({rows,sub}) {
+  console.log(sub, 'combined export dropdown')
+
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
