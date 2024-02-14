@@ -10,7 +10,7 @@ import { StepTwo } from "../Steps/StepTwo/StepTwo";
 import { StepThree } from "../Steps/StepThree/StepThree";
 import { StepFour } from "../Steps/StepFour/StepFour";
 import { FireBaseContext } from "../../Context/FireBase";
-import { addDoc, setDoc, collection, doc } from "firebase/firestore";
+import { addDoc, setDoc, collection, doc, getDoc } from "firebase/firestore";
 import { SearchContext } from "../../Context/SearchContext";
 import { useNavigate } from "react-router-dom";
 export default function NewEvent() {
@@ -26,6 +26,7 @@ export default function NewEvent() {
     IdIncluded,
     setId,
     currentUsr,
+    database
   } = useContext(FireBaseContext);
   const { setAccpetAll, AccpetAllTermss } = useContext(SearchContext);
   const [skipped, setSkipped] = useState(new Set());
@@ -101,8 +102,30 @@ export default function NewEvent() {
         break;
     }
   };
+  console.log(currentUsr,'user user')
   const SendDataToFireBase = async () => {
-    await addDoc(EventRefrence,newEvent);
+    await addDoc(EventRefrence,newEvent).then(async(snapshot)=>{
+console.log(snapshot, 'snapshot event')
+const currentUserName = await getDoc(doc(database, 'users',currentUsr))
+console.log(currentUserName,'current')
+
+
+const newNotificationObj={EventName:newEvent.EventName,
+  TimeStamp:new Date().toLocaleString(),
+  EventID:newEvent.Id,
+  NewEventID:snapshot.id,
+  CreatedAt:newEvent.CreatedAt,
+  // TODO: user name?
+  // CreatedBy:currentUserName.displayName
+  CreatedBy:currentUsr
+}
+await addDoc(collection(database,'notifications'),
+newNotificationObj)
+
+     });
+    console.log('add notification')
+ 
+    // add notification for this event
     // const ref= collection(TeamsRefrence,newEvent.Franchise)
     // const FranchiseRef = doc(TeamsRefrence,newEvent.Franchise);
      // console.log(FranchiseRef)
