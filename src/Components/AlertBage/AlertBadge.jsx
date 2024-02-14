@@ -11,6 +11,7 @@ import {
   onSnapshot,
   doc,
   getDoc,
+  updateDoc,
 } from "firebase/firestore";
 import Button from "@mui/material/Button";
 import Menu from "@mui/material/Menu";
@@ -50,23 +51,34 @@ export default function AlertBadge() {
           ...doc.data(),
         }));
         // sort notify
+        setTriggerNum(
+          newNotifications.filter(({ isRead }) => isRead == false).length
+        );
+        console.log(
+          newNotifications.filter(({ isRead }) => isRead == false),
+          " new notify filter"
+        );
 
         setNotifications([
-          ...newNotifications.sort((x, y) => {
-            if (
-              new Date(x.CreatedAt).getTime() < new Date(y.CreatedAt).getTime()
-            ) {
-              return 1;
-            }
-            if (
-              new Date(x.CreatedAt).getTime() > new Date(y.CreatedAt).getTime()
-            ) {
-              return -1;
-            }
-            return 0;
+          ...newNotifications
+            // .filter((item) => item.isRead == false)
+            .sort((x, y) => {
+              if (
+                new Date(x.CreatedAt).getTime() <
+                new Date(y.CreatedAt).getTime()
+              ) {
+                return 1;
+              }
+              if (
+                new Date(x.CreatedAt).getTime() >
+                new Date(y.CreatedAt).getTime()
+              ) {
+                return -1;
+              }
+              return 0;
 
-            // return a.EventID - b.EventID
-          }),
+              // return a.EventID - b.EventID
+            }),
         ]);
       }
     );
@@ -91,15 +103,20 @@ export default function AlertBadge() {
     setAnchorEl(event.currentTarget);
   };
 
-  const handleClose = (EventID, NewEventID) => {
+  const handleClose = async (EventID, NewEventID, notifyID) => {
     setAnchorEl(null);
+    await updateDoc(doc(database, "notifications", notifyID), { isRead: true });
     navigation(`/app/subscribers/${EventID}/${NewEventID}`);
   };
   return (
     <>
       <IconButton
         onClick={(e) => {
-          setTriggerNum(0);
+          // setTriggerNum(0);
+          // update to firebase
+          // setNotifications([
+          //   ...notifications.map((item) => ({ ...item, isRead: true })),
+          // ]);
           handleClick(e);
         }}
         aria-label={notificationsLabel(triggerNum)}
@@ -126,29 +143,38 @@ export default function AlertBadge() {
       {/* <Button onClick={handleClick} variant="contained">
       Open Menu
     </Button> */}
-      <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}>
-        {notifications.slice(0, 5).map((notify) => (
-          <div>
-            {/* on click navigate to page */}
-            {/* <MenuItem onClick={handleClose} key={notify.id}> */}
-            <MenuItem
-              onClick={() => handleClose(notify.EventID, notify.NewEventID)}
-              key={notify.id}
-            >
-              <div className="">
-                <div className="py-2 fw-bolder">{`New Event Created '${notify.EventName}'`}</div>
-                <div className="px-2">{`By: ${notify.CreatedBy}`}</div>
-                <div className="px-2 fs-6">{`At: ${notify.CreatedAt}`}</div>
-                {/* <div>{notify.TimeStamp}</div> */}
-              </div>
-            </MenuItem>
-            <Divider variant="middle" component="li" />
-          </div>
-        ))}
-        {/* <MenuItem onClick={handleClose}>Option 1</MenuItem> */}
-        {/* <MenuItem onClick={handleClose}>Option 2</MenuItem> */}
-        {/* <MenuItem onClick={handleClose}>Option 3</MenuItem> */}
-      </Menu>
+      {notifications.length !== 0 && (
+        <Menu
+          anchorEl={anchorEl}
+          open={Boolean(anchorEl)}
+          onClose={() => setAnchorEl(null)}
+        >
+          {notifications.slice(0, 5).map((notify) => (
+            <div>
+              {/* on click navigate to page */}
+              {/* <MenuItem onClick={handleClose} key={notify.id}> */}
+              <MenuItem
+                onClick={() =>
+                  handleClose(notify.EventID, notify.NewEventID, notify.id)
+                }
+                key={notify.id}
+                className={`mx-2 rounded ${!notify.isRead && "bg-light"}`}
+              >
+                <div>
+                  <div className="py-2 fw-bolder">{`New Event Created '${notify.EventName}'`}</div>
+                  <div className="px-2">{`By: ${notify.CreatedBy}`}</div>
+                  <div className="px-2 fs-6">{`At: ${notify.CreatedAt}`}</div>
+                  {/* <div>{notify.TimeStamp}</div> */}
+                </div>
+              </MenuItem>
+              <Divider variant="middle" component="li" />
+            </div>
+          ))}
+          {/* <MenuItem onClick={handleClose}>Option 1</MenuItem> */}
+          {/* <MenuItem onClick={handleClose}>Option 2</MenuItem> */}
+          {/* <MenuItem onClick={handleClose}>Option 3</MenuItem> */}
+        </Menu>
+      )}
       {/* </div> */}
 
       {/* <Notification/> */}
