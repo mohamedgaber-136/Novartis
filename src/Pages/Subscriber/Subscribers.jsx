@@ -13,7 +13,7 @@ export const Subscribers = () => {
   const infoCollection = collection(ref,'Subscribers')
   useEffect(()=>{
     getData(infoCollection,setSubscribers)
-},[])
+},[dbID])
 console.log(Subscribers,'sub')
   return (
     <div className='EventsPageParent d-flex flex-column container gap-3  '>

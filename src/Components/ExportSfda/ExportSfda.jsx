@@ -82,14 +82,34 @@ const ExportSfda = ({ data, filename, sheetname }) => {
     // Set the background color for the entire row (e.g., row 1)
     const rowIndex = 1;
     const row = worksheet.getRow(rowIndex);
-    row.eachCell({ includeEmpty: true }, (cell) => {
-      cell.fill = {
-        type: "pattern",
-        pattern: "solid",
-        fgColor: { argb: "80FFFF00" }, // ARGB format for light red color
-      };
-      cell.font = { size: 12 };
-      cell.alignment = { horizontal: "center", vertical: "middle" };
+    row.eachCell({ includeEmpty: true }, (cell,index) => {
+      if(index>11){
+        cell.fill = {
+          type: "pattern",
+          pattern: "solid",
+          fgColor: { argb: "80FFFF00" }, // ARGB format for light red color
+        };
+        cell.font = { size: 12 };
+        cell.alignment = { horizontal: "center", vertical: "middle" };
+      } else if(index===11){
+        cell.fill = {
+          type: "pattern",
+          pattern: "solid",
+          fgColor: { argb: "80009900" }, // ARGB format for light red color
+        };
+        cell.font = { size: 12 };
+        cell.alignment = { horizontal: "center", vertical: "middle" };
+      }
+        else{
+        cell.fill = {
+          type: "pattern",
+          pattern: "solid",
+          fgColor: { argb: "AAFF0000" }, // ARGB format for light red color
+        };
+        cell.font = { size: 12 };
+        cell.alignment = { horizontal: "center", vertical: "middle" };
+      }
+     
     });
 
     // Add data rows

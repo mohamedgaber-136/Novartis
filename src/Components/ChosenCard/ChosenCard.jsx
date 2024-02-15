@@ -15,7 +15,7 @@ export const ChosenCard = () => {
       const Result = await datas.data();
       setResultData(Result);
     })();
-  }, []);
+  }, [dbID]);
   console.log(ResultData, "Result");
 
   return (
