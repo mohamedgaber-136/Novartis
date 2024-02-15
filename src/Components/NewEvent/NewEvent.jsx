@@ -26,7 +26,7 @@ export default function NewEvent() {
     IdIncluded,
     setId,
     currentUsr,
-    database
+    database,
   } = useContext(FireBaseContext);
   const { setAccpetAll, AccpetAllTermss } = useContext(SearchContext);
   const [skipped, setSkipped] = useState(new Set());
@@ -102,55 +102,55 @@ export default function NewEvent() {
         break;
     }
   };
-  console.log(currentUsr,'user user')
   const SendDataToFireBase = async () => {
-    await addDoc(EventRefrence,newEvent).then(async(snapshot)=>{
-console.log(snapshot, 'snapshot event')
-const currentUserName = await getDoc(doc(database, 'users',currentUsr))
-console.log(currentUserName,'current')
+    await addDoc(EventRefrence, { ...newEvent, CreatedByID: currentUsr }).then(
+      async (snapshot) => {
+        const currentUserName = await getDoc(
+          doc(database, "Users", currentUsr)
+        );
 
+        const newNotificationObj = {
+          EventName: newEvent.EventName,
+          TimeStamp: new Date().toLocaleString(),
+          EventID: newEvent.Id,
+          NewEventID: snapshot.id,
+          CreatedAt: newEvent.CreatedAt,
+          CreatedBy: currentUserName.data().Name
+            ? currentUserName.data().Name
+            : "Admin",
+          CreatedByID: currentUsr,
+          isReadUsersID: [],
+        };
+        await addDoc(collection(database, "notifications"), newNotificationObj);
+      }
+    );
 
-const newNotificationObj={EventName:newEvent.EventName,
-  TimeStamp:new Date().toLocaleString(),
-  EventID:newEvent.Id,
-  NewEventID:snapshot.id,
-  CreatedAt:newEvent.CreatedAt,
-  // TODO: user name?
-  // CreatedBy:currentUserName.displayName
-  CreatedBy:currentUsr
-}
-await addDoc(collection(database,'notifications'),
-newNotificationObj)
-
-     });
-    console.log('add notification')
- 
     // add notification for this event
     // const ref= collection(TeamsRefrence,newEvent.Franchise)
     // const FranchiseRef = doc(TeamsRefrence,newEvent.Franchise);
-     // console.log(FranchiseRef)
+    // console.log(FranchiseRef)
     // const collRef = collection(FranchiseRef, "Events");
     // await addDoc(collRef, { ...newEvent, UserID: currentUsr });
     setNewEvent({
       EventName: "",
-    CostperDelegate: "",
-    PO: "",
-    Franchise: "",
-    Id: "",
-    City: [],
-    P3: "",
-    TransferOfValue: [],
-    CreatedAt: new Date().toLocaleString(),
-    StartDate: "",
-    EndDate: "",
-    DateFromHours: "",
-    DateEndHours: "",
-    BackGroundColor: "#FFF",
-    FontColor: "#000",
-    ButtonColor: "#00F",
-    AccpetAllTermss: false,
+      CostperDelegate: "",
+      PO: "",
+      Franchise: "",
+      Id: "",
+      City: [],
+      P3: "",
+      TransferOfValue: [],
+      CreatedAt: new Date().toLocaleString(),
+      StartDate: "",
+      EndDate: "",
+      DateFromHours: "",
+      DateEndHours: "",
+      BackGroundColor: "#FFF",
+      FontColor: "#000",
+      ButtonColor: "#00F",
+      AccpetAllTermss: false,
     });
-    setTriggerNum(triggerNum + 1);
+    // setTriggerNum(triggerNum + 1);
     navigation("/app/events");
   };
   useEffect(() => {
@@ -226,7 +226,11 @@ newNotificationObj)
                 )}
                 <Button
                   className={`text-white " bg-secondary" ${
-                    open || IdIncluded ||(activeStep == 1 && !newEvent.AccpetAllTermss) ? " bg-secondary" : "btn-DarkBlue"
+                    open ||
+                    IdIncluded ||
+                    (activeStep == 1 && !newEvent.AccpetAllTermss)
+                      ? " bg-secondary"
+                      : "btn-DarkBlue"
                   }`}
                   disabled={
                     (activeStep == 1 && !newEvent.AccpetAllTermss) ||

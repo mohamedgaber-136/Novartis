@@ -104,7 +104,7 @@ const onsubmit =  (values)=>{
       setErrorMsg(false)
       await addDoc(subscriberCollection, values);
       setShowAddNeWSub(false);
-      setTriggerNum(triggerNum + 1);
+      // setTriggerNum(triggerNum + 1);
       handleClose()
     })
   }

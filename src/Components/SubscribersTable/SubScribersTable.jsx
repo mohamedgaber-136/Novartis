@@ -322,7 +322,7 @@ export default function SubScribersTable({ rows, refCollection }) {
     setSelected(newSelected);
   };
   return (
-    <Box sx={{ width: "100%" }}>
+    <Box sx={{ width: "100%"}}>
       <Paper sx={{ width: "100%", mb: 2 }}>
         <EnhancedTableToolbar numSelected={selected.length} />
         <TableContainer>

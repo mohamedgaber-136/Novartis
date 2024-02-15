@@ -109,7 +109,7 @@ export const UpdateSubscriberForm = ({ user ,handleClose}) => {
                     TransferOfValue:valus
                   };
                   await updateDoc(userData, updateSub);
-                  setTriggerNum(triggerNum + 1);
+                  // setTriggerNum(triggerNum + 1);
               
         swal({
           icon: "success",
