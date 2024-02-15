@@ -1,7 +1,13 @@
 import { initializeApp } from "@firebase/app";
 import { createContext, useEffect, useState } from "react";
 
-import { collection, getFirestore, onSnapshot, doc,getDoc } from "firebase/firestore";
+import {
+  collection,
+  getFirestore,
+  onSnapshot,
+  doc,
+  getDoc,
+} from "firebase/firestore";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 export const FireBaseContext = createContext();
 const FireBaseContextProvider = ({ children }) => {
@@ -17,6 +23,7 @@ const FireBaseContextProvider = ({ children }) => {
   const [updateUser, setUpdateUser] = useState(null);
   const [Subscribers, setSubscribers] = useState([]);
   const [roleCondition, setRole] = useState("");
+  const [currentUserRole, setCurrentUserRole] = useState("");
   const [newEvent, setNewEvent] = useState({
     EventName: "",
     CostperDelegate: "",
@@ -60,7 +67,6 @@ const FireBaseContextProvider = ({ children }) => {
   const getData = (CollectionType, SetItem) => {
     const returnedValue = onSnapshot(CollectionType, (snapshot) => {
       const newData = snapshot.docs.map((doc) => ({
-        
         ID: doc.id,
         ...doc.data(),
       }));
@@ -76,12 +82,10 @@ const FireBaseContextProvider = ({ children }) => {
       setLoading(false);
       if (user) {
         setCurrentUser(user.uid);
-        const users = doc(
-          UserRef,
-          user.uid
-        )
-          const finaleUser = await getDoc(users);
-          localStorage.setItem('REF',JSON.stringify(finaleUser.data().Role))   
+        const users = doc(UserRef, user.uid);
+        const finaleUser = await getDoc(users);
+        setCurrentUserRole(finaleUser.data().Role);
+        localStorage.setItem("REF", JSON.stringify(finaleUser.data()));
       } else {
         setCurrentUser(null);
       }
@@ -92,6 +96,36 @@ const FireBaseContextProvider = ({ children }) => {
       }
     };
   }, []);
+
+  const setEventsListDataAccordingToUserRole = (dataList) => {
+    switch (true) {
+      case currentUserRole.toLowerCase().includes("admin"): {
+        console.log("currentUserRole admin case");
+        return dataList;
+        // setEventsAccordingToRole([...data]);
+        // break;
+      }
+      case currentUserRole.toLowerCase().includes("brand manager"): {
+        console.log("currentUserRole brand manager case");
+        return dataList.filter(({ CreatedByID }) => CreatedByID == currentUsr);
+        // setEventsAccordingToRole([
+        //   ...data.filter(({ CreatedByID }) => CreatedByID == currentUsr),
+        // ]);
+        // break;
+      }
+      case currentUserRole.toLowerCase().includes("franchise"): {
+        console.log("currentUserRole franchise manager case");
+        const franchiseType = currentUserRole.split("-")[1];
+        console.log(franchiseType, "franchise manager case");
+        return dataList.filter(({ Franchise }) => Franchise == franchiseType);
+        // setEventsAccordingToRole([
+        //   ...data.filter(({ Franchise }) => Franchise == franchiseType),
+        // ]);
+        // break;
+      }
+     
+    }
+  };
 
   return (
     <FireBaseContext.Provider
@@ -131,6 +165,9 @@ const FireBaseContextProvider = ({ children }) => {
         setSubscribers,
         setTeams,
         TeamsRefrence,
+        currentUserRole,
+        setCurrentUserRole,
+        setEventsListDataAccordingToUserRole,
       }}
     >
       {!loading && children}

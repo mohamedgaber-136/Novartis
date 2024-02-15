@@ -102,31 +102,28 @@ export default function NewEvent() {
         break;
     }
   };
-  console.log(currentUsr, "user user");
   const SendDataToFireBase = async () => {
-    await addDoc(EventRefrence, newEvent).then(async (snapshot) => {
-      console.log(snapshot, "snapshot event");
-      const currentUserName = await getDoc(doc(database, "Users", currentUsr));
-      console.log(currentUserName, "current");
-      console.log(currentUserName.data(), "current");
+    await addDoc(EventRefrence, { ...newEvent, CreatedByID: currentUsr }).then(
+      async (snapshot) => {
+        const currentUserName = await getDoc(
+          doc(database, "Users", currentUsr)
+        );
 
-      const newNotificationObj = {
-        EventName: newEvent.EventName,
-        TimeStamp: new Date().toLocaleString(),
-        EventID: newEvent.Id,
-        NewEventID: snapshot.id,
-        CreatedAt: newEvent.CreatedAt,
-        // TODO: user name?
-        CreatedBy: currentUserName.data().Name
-          ? currentUserName.data().Name
-          : "Admin",
-        CreatedByID: currentUsr,
-        isRead: false,
-        // CreatedBy:currentUsr
-      };
-      await addDoc(collection(database, "notifications"), newNotificationObj);
-    });
-    console.log("add notification");
+        const newNotificationObj = {
+          EventName: newEvent.EventName,
+          TimeStamp: new Date().toLocaleString(),
+          EventID: newEvent.Id,
+          NewEventID: snapshot.id,
+          CreatedAt: newEvent.CreatedAt,
+          CreatedBy: currentUserName.data().Name
+            ? currentUserName.data().Name
+            : "Admin",
+          CreatedByID: currentUsr,
+          isReadUsersID: [],
+        };
+        await addDoc(collection(database, "notifications"), newNotificationObj);
+      }
+    );
 
     // add notification for this event
     // const ref= collection(TeamsRefrence,newEvent.Franchise)
@@ -153,7 +150,7 @@ export default function NewEvent() {
       ButtonColor: "#00F",
       AccpetAllTermss: false,
     });
-    setTriggerNum(triggerNum + 1);
+    // setTriggerNum(triggerNum + 1);
     navigation("/app/events");
   };
   useEffect(() => {

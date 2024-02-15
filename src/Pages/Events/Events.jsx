@@ -10,8 +10,13 @@ import {
   getDoc,
 } from "firebase/firestore";
 export const Events = () => {
-  const { events, getData, setEvents, EventRefrence } =
-    useContext(FireBaseContext);
+  const {
+    events,
+    getData,
+    setEvents,
+    EventRefrence,
+    setEventsListDataAccordingToUserRole,
+  } = useContext(FireBaseContext);
   const [informations, setInformations] = useState([]);
   const [sub, setSub] = useState([]);
   const [combinedData, setCombinedData] = useState([]);
@@ -33,7 +38,6 @@ export const Events = () => {
         return mainDocData;
       });
       setCombinedData(eventObj);
-      // console.log(datas)
     };
     fetchData();
   }, []);
@@ -119,12 +123,14 @@ export const Events = () => {
           return item;
         });
         const results = await Promise.all(promises);
-        console.log(results, "results events");
-        setEvents(results);
+        // setEvents(result);
+        setEvents([...setEventsListDataAccordingToUserRole(results)]);
       };
       fetchDataForItems();
     }
   }, [informations]);
+
+  console.log(events, "events");
   return (
     <div className="d-flex flex-column container gap-3 EventsPageParent ">
       <h2>Events</h2>

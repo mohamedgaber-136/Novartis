@@ -12,6 +12,8 @@ import {
   doc,
   getDoc,
   updateDoc,
+  where,
+  query,
 } from "firebase/firestore";
 import Button from "@mui/material/Button";
 import Menu from "@mui/material/Menu";
@@ -22,7 +24,8 @@ import SnackBarItem from "../SnackBarItem/SnackBarItem";
 
 export default function AlertBadge() {
   const navigation = useNavigate();
-  const { triggerNum, setTriggerNum, database } = useContext(FireBaseContext);
+  const { triggerNum, setTriggerNum, database, currentUsr } =
+    useContext(FireBaseContext);
   const [snackBarConfig, setSanckBarConfig] = useState({
     open: false,
     message: "",
@@ -38,50 +41,59 @@ export default function AlertBadge() {
     return `${count} notifications`;
   }
 
-  // const {database} = useContext(FireBaseContext)
   const [notifications, setNotifications] = useState([]);
 
   useEffect(() => {
     // Set up real-time listener for changes in the 'notifications' collection
-    const unsubscribe = onSnapshot(
+    const notificationsQuery = query(
       collection(database, "notifications"),
-      (snapshot) => {
-        const newNotifications = snapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-        // sort notify
-        setTriggerNum(
-          newNotifications.filter(({ isRead }) => isRead == false).length
-        );
-        console.log(
-          newNotifications.filter(({ isRead }) => isRead == false),
-          " new notify filter"
-        );
-
-        setNotifications([
-          ...newNotifications
-            // .filter((item) => item.isRead == false)
-            .sort((x, y) => {
-              if (
-                new Date(x.CreatedAt).getTime() <
-                new Date(y.CreatedAt).getTime()
-              ) {
-                return 1;
-              }
-              if (
-                new Date(x.CreatedAt).getTime() >
-                new Date(y.CreatedAt).getTime()
-              ) {
-                return -1;
-              }
-              return 0;
-
-              // return a.EventID - b.EventID
-            }),
-        ]);
-      }
+      where("CreatedByID", "!=", currentUsr)
     );
+    const unsubscribe = onSnapshot(notificationsQuery, (snapshot) => {
+      const newNotifications = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+
+      const editedNotifications = newNotifications
+        .sort((x, y) =>
+          new Date(x.CreatedAt).getTime() < new Date(y.CreatedAt).getTime()
+            ? 1
+            : -1
+        )
+        .map((notify) => {
+          const found = notify.isReadUsersID.find((item) => item == currentUsr);
+          if (found) {
+            return { ...notify, isRead: true };
+          }
+          return { ...notify, isRead: false };
+        });
+      // sort notify
+      setTriggerNum(
+        editedNotifications.slice(0, 5).filter(({ isRead }) => isRead == false)
+          .length
+      );
+
+      setNotifications([
+        ...editedNotifications,
+        // .filter((item) => item.isRead == false)
+        // .sort((x, y) => {
+        //   if (
+        //     new Date(x.CreatedAt).getTime() <
+        //     new Date(y.CreatedAt).getTime()
+        //   ) {
+        //     return 1;
+        //   }
+        //   if (
+        //     new Date(x.CreatedAt).getTime() >
+        //     new Date(y.CreatedAt).getTime()
+        //   ) {
+        //     return -1;
+        //   }
+        //   return 0;
+        // }),
+      ]);
+    });
 
     // Clean up the listener when the component unmounts
     return () => unsubscribe();
@@ -99,13 +111,17 @@ export default function AlertBadge() {
   const [anchorEl, setAnchorEl] = useState(null);
 
   const handleClick = (event) => {
-    console.log(notifications, "notifications list");
     setAnchorEl(event.currentTarget);
   };
 
   const handleClose = async (EventID, NewEventID, notifyID) => {
     setAnchorEl(null);
-    await updateDoc(doc(database, "notifications", notifyID), { isRead: true });
+
+    const currentNotification = notifications.find(({ id }) => id == notifyID);
+    await updateDoc(doc(database, "notifications", notifyID), {
+      isReadUsersID: [...currentNotification?.isReadUsersID, currentUsr],
+    });
+    currentNotification.isRead = true;
     navigation(`/app/subscribers/${EventID}/${NewEventID}`);
   };
   return (
@@ -138,46 +154,49 @@ export default function AlertBadge() {
         setSanckBarConfig={setSanckBarConfig}
       />
 
-      {/* <UseMenu/> */}
-      {/* <div> */}
-      {/* <Button onClick={handleClick} variant="contained">
-      Open Menu
-    </Button> */}
       {notifications.length !== 0 && (
         <Menu
           anchorEl={anchorEl}
           open={Boolean(anchorEl)}
           onClose={() => setAnchorEl(null)}
         >
-          {notifications.slice(0, 5).map((notify) => (
-            <div>
-              {/* on click navigate to page */}
-              {/* <MenuItem onClick={handleClose} key={notify.id}> */}
+          {notifications.slice(0, 5).map((notify, notifyIndex) => (
+            <>
               <MenuItem
                 onClick={() =>
                   handleClose(notify.EventID, notify.NewEventID, notify.id)
                 }
                 key={notify.id}
-                className={`mx-2 rounded ${!notify.isRead && "bg-light"}`}
+                className={`mx-2 rounded text-dark ${
+                  !notify.isRead && "bg-light"
+                }`}
               >
-                <div>
-                  <div className="py-2 fw-bolder">{`New Event Created '${notify.EventName}'`}</div>
-                  <div className="px-2">{`By: ${notify.CreatedBy}`}</div>
-                  <div className="px-2 fs-6">{`At: ${notify.CreatedAt}`}</div>
-                  {/* <div>{notify.TimeStamp}</div> */}
+                {/* <h5
+                  className="py-2 fw-bolder text-wrap"
+                  style={{ width: "200px" }}
+                >{`New Event Created '${notify.EventName}'`}</h5> */}
+
+                <div className="text-wrap w-100">
+                  <div className="fs-6">
+                    <span className="fw-semibold">{notify.CreatedBy}</span>
+                    <span className="px-1">{`added a new event:`}</span>
+                    <span className="d-block fst-italic">{`"${notify.EventName}"`}</span>
+                  </div>
+                  <span
+                    className="px-2 text-dark-emphasis"
+                    style={{ fontSize: "13px" }}
+                  >
+                    {new Date(notify.CreatedAt).toDateString()}
+                  </span>
                 </div>
               </MenuItem>
-              <Divider variant="middle" component="li" />
-            </div>
+              {notifyIndex !== notifications.length - 1 && (
+                <Divider variant="middle" component="li" />
+              )}
+            </>
           ))}
-          {/* <MenuItem onClick={handleClose}>Option 1</MenuItem> */}
-          {/* <MenuItem onClick={handleClose}>Option 2</MenuItem> */}
-          {/* <MenuItem onClick={handleClose}>Option 3</MenuItem> */}
         </Menu>
       )}
-      {/* </div> */}
-
-      {/* <Notification/> */}
     </>
   );
 }
