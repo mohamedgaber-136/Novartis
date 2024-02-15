@@ -28,7 +28,7 @@ const SearchText = ({ list }) => {
   return (
     <div >
       <TextField
-        label="SEARCH"
+        placeholder="search...."
         variant="outlined"
         value={filter}
         onChange={handleFilterChange}

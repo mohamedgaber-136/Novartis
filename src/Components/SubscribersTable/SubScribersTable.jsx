@@ -36,6 +36,8 @@ import Modal from "../Modal/Modal";
 import ImportExcel from "../ImportExcel/ImportExcel";
 import ChangeEventModal from "../ChangeEventModal/ChangeEventModal";
 import ExportToExcelButton from "../ExportBtn/ExportToExcelButton";
+import SettingsBtn from "../SettingsBtn/SettingsBtn";
+import SearchText from "../SearchText/SearchText";
 export default function SubScribersTable({ rows, refCollection }) {
   const {
     setUpdateUser,
@@ -68,6 +70,7 @@ export default function SubScribersTable({ rows, refCollection }) {
       ? (a, b) => descendingComparator(a, b, orderBy)
       : (a, b) => -descendingComparator(a, b, orderBy);
   }
+  console.log('hi')
   function stableSort(array, comparator) {
     const stabilizedThis = array?.map((el, index) => [el, index]);
     stabilizedThis?.sort((a, b) => {
@@ -79,6 +82,30 @@ export default function SubScribersTable({ rows, refCollection }) {
     });
     return stabilizedThis?.map((el) => el[0]);
   }
+  const removeSubscriber = async (id) => {
+    const ref = doc(refCollection, id);
+    const item = await getDoc(ref);
+    swal({
+      title: "Are you sure You want Delete this subscriber?",
+      icon: "warning",
+      buttons: true,
+      dangerMode: true,
+    }).then(async (willDelete) => {
+      if (willDelete) {
+        swal({
+          icon: "success",
+        });
+        await deleteDoc(ref);
+        await setDoc(doc(SubscribersDeletedRef, id), {
+          event: dbID,
+          ID: id,
+          timing: serverTimestamp(),
+          ...item.data(),
+        });
+      }
+    });
+  };
+// Settings Options 
   // HeadTitles
   const headCells = [
     {
@@ -135,18 +162,8 @@ export default function SubScribersTable({ rows, refCollection }) {
       disablePadding: false,
       label: "Signature",
     },
-    {
-      id: "Delete",
-      numeric: true,
-      disablePadding: false,
-      label: "Delete",
-    },
-    {
-      id: "Edit",
-      numeric: true,
-      disablePadding: false,
-      label: "Edit",
-    },
+   
+   
   ];
 
   function EnhancedTableHead(props) {
@@ -257,6 +274,7 @@ export default function SubScribersTable({ rows, refCollection }) {
             />
 {" "}
 <ImportExcel />
+{/* <SearchText list={rows}/> */}
 </div>
   <Tooltip title="AddNew">
   <IconButton>
@@ -281,29 +299,7 @@ export default function SubScribersTable({ rows, refCollection }) {
     console.log(""),
     [order, orderBy, page, rowsPerPage]
   );
-  const removeSubscriber = async (id) => {
-    const ref = doc(refCollection, id);
-    const item = await getDoc(ref);
-    swal({
-      title: "Are you sure You want Delete this subscriber?",
-      icon: "warning",
-      buttons: true,
-      dangerMode: true,
-    }).then(async (willDelete) => {
-      if (willDelete) {
-        swal({
-          icon: "success",
-        });
-        await deleteDoc(ref);
-        await setDoc(doc(SubscribersDeletedRef, id), {
-          event: dbID,
-          ID: id,
-          timing: serverTimestamp(),
-          ...item.data(),
-        });
-      }
-    });
-  };
+
   const updateSup = (row) => {
     setShowUpdate(true);
     setUpdateUser(row);
@@ -342,7 +338,7 @@ export default function SubScribersTable({ rows, refCollection }) {
               onSelectAllClick={handleSelectAllClick}
               onRequestSort={handleRequestSort}
             />
-            {rows.length != 0 && (
+            {rows.length !== 0 && (
               <TableBody>
                 {visibleRows.map((row, index) => {
                   const isItemSelected = isSelected(row.ID);
@@ -378,7 +374,7 @@ export default function SubScribersTable({ rows, refCollection }) {
                         {row.id}
                       </TableCell>
                       <TableCell align="right">{row.Name}</TableCell>
-                      <TableCell align="right">{row.Email}</TableCell>
+                      <TableCell align="center">{row.Email}</TableCell>
                       <TableCell align="right">{row.PhoneNumber}</TableCell>
                       <TableCell align="right">{row.Organization}</TableCell>
                       <TableCell align="right">{row.Speciality}</TableCell>
@@ -394,17 +390,9 @@ export default function SubScribersTable({ rows, refCollection }) {
                         )}
                       </TableCell>
                       <TableCell align="right">
-                        <DeleteForeverIcon
-                          onClick={() => {
-                            removeSubscriber(row.ID);
-                            setTriggerNum(triggerNum + 1);
-                          }}
-                          className="bg-danger text-white rounded-2 rounded deleteIcon border"
-                        />
+                        <SettingsBtn row={row} rowId={row.ID} refCollection={refCollection}/>
                       </TableCell>
-                      <TableCell align="right">
-                      <UpdateSubModel user={row}/>
-                      </TableCell>
+
                     </TableRow>
                   );
                 })}

@@ -46,7 +46,7 @@ useEffect(()=>{
          
           renderInput={(startProps) => (
             <>
-              <TextField {...startProps} name={condition?'StartDate':'EndDate'} />
+              <TextField {...startProps} name={condition?'StartDate':'EndDate'} className="dateField" />
             </>
           )}
           />

@@ -1,6 +1,6 @@
 import React from "react";
 import * as XLSX from "xlsx";
-import DownloadIcon from '@mui/icons-material/Download';
+import Button from '@mui/material/Button';
  const ImportExcel = () => {
   const handleFileChange = (e) => {
     const file = e.target.files[0];
@@ -25,13 +25,15 @@ import DownloadIcon from '@mui/icons-material/Download';
    
   };
 
-  return (<div className=" darkBlue d-flex justify-content-center align-items-center   " >
-    <label htmlFor="importFile" tabindex={1}>
-      {/* <DownloadIcon className="text-white"/> */}
-      Import
-    </label>
+  return (
+  
+  <Button   id="fade-button" className="d-flex flex-column "   >
+    <label htmlFor="importFile"  className="d-flex flex-column">
+      <i className="fa-solid fa-file-arrow-up fs-4 darkBlue"></i>   
+      <span>Import</span>
+       </label>
       <input type="file" id='importFile' className="d-none"  accept=".xlsx" onChange={handleFileChange} />
-  </div>
+  </Button>
   );
 };
 export default ImportExcel;

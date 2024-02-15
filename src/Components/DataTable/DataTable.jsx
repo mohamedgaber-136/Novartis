@@ -281,6 +281,7 @@ export default function DataTable({ row,sub }) {
     return (
       <Toolbar
         sx={{
+       
           pl: { sm: 2 },
           pr: { xs: 1, sm: 1 },
           ...(numSelected > 0 && {
@@ -331,7 +332,7 @@ export default function DataTable({ row,sub }) {
   // body ----------------
   return (
     <Paper sx={{ width: "100%", mb: 0 }} className="BasicTableParent">
-      <div className=" d-flex align-items-center gap-2 p-3 d-flex justify-content-end">
+      <div className=" d-flex align-items-center gap-2 p-3 d-flex justify-content-end ">
         <span className="d-flex gap-2 align-items-center">
           <span className="fs-6 exportExcel">
           <ExportDropDown rows={rows} sub={sub}/>

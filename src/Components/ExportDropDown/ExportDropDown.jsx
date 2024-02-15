@@ -23,8 +23,10 @@ export default function ExportDropDown({rows,sub}) {
         aria-haspopup="true"
         aria-expanded={open ? 'true' : undefined}
         onClick={handleClick}
+        className="d-flex flex-column "
       >
-        Export
+        <i className="fa-solid fa-file-arrow-down fs-4 darkBlue"></i>
+        <span>export</span>
       </Button>
       <Menu
         id="fade-menu"

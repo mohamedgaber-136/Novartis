@@ -28,10 +28,12 @@ export default function UpdateSubModel({user}) {
 
   return (
     <>
-      <Button  onClick={handleClickOpen}>
-      <AutoFixHighIcon
-         className="bg-warning text-dark rounded-2 rounded deleteIcon border p-1"
-                        />      </Button>
+      <Button  onClick={handleClickOpen} className=' darkBlue w-100  d-flex justify-content-start  p-0'>
+<div className="w-75 d-flex justify-content-between align-items-center">
+<span>edit</span> <i className={`fa-solid fa-pen w-25`}></i> 
+</div>
+         
+     </Button>
       <BootstrapDialog
         onClose={handleClose}
         aria-labelledby="customized-dialog-title"
