@@ -22,18 +22,23 @@ export const Dashboard = () => {
       color: "#0460a9",
     },
   ];
-  const { getData, EventRefrence, setEventsListDataAccordingToUserRole } =
-    useContext(FireBaseContext);
+  const { getData, EventRefrence, eventsQueryRole } = useContext(
+    FireBaseContext
+  );
   const [data, setData] = useState([]);
   const [eventsAccordingToRole, setEventsAccordingToRole] = useState([]);
 
   useEffect(() => {
-    getData(EventRefrence, setData);
-  }, []);
+    if (eventsQueryRole) {
+      getData(eventsQueryRole, setData);
+    }
+    // getData(EventRefrence, setData);
+  }, [eventsQueryRole]);
 
   useEffect(() => {
     if (data.length !== 0) {
-      setEventsAccordingToRole([...setEventsListDataAccordingToUserRole(data)]);
+      setEventsAccordingToRole(data);
+      // setEventsAccordingToRole([...setEventsListDataAccordingToUserRole(data)]);
     }
   }, [data]);
 
