@@ -12,11 +12,11 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import { Formik, Form } from "formik";
 import { useContext, useEffect, useState } from "react";
 import { FireBaseContext } from "../../Context/FireBase";
-import { collection, doc ,getDoc } from "firebase/firestore";
+import { collection, doc, getDoc } from "firebase/firestore";
 const Login = () => {
   const navigation = useNavigate();
   const [error, setError] = useState(false);
-  const { auth} = useContext(FireBaseContext);
+  const { auth } = useContext(FireBaseContext);
   const [ShowSpinning, setShowSpinning] = useState(false);
   const formData = [
     {
@@ -33,6 +33,17 @@ const Login = () => {
     e.preventDefault();
     signInWithEmailAndPassword(auth, e.target[0].value, e.target[2].value)
       .then(async (res) => {
+        // const currentUser = auth().currentUser;
+        // console.log(currentUser,'current');
+        // currentUser.getIdTokenResult().then(idTokenResult => {
+        //   currentUser.superAdmin = idTokenResult.claims.superAdmin;
+
+        //   if (!currentUser.superAdmin) {
+        //     console.log('is not admin');
+        //     // firebase.logout();
+        //   }
+        // });
+
         setError(false);
         setShowSpinning(true);
         navigateTime = setTimeout(() => navigation(`/app`), 2000);

@@ -25,7 +25,7 @@ const FireBaseContextProvider = ({ children }) => {
   const [updateUser, setUpdateUser] = useState(null);
   const [Subscribers, setSubscribers] = useState([]);
   const [roleCondition, setRole] = useState("");
-  const [currentUserRole, setCurrentUserRole] = useState('');
+  const [currentUserRole, setCurrentUserRole] = useState("");
   const [eventsQueryRole, setEventsQueryRole] = useState(null);
   const [newEvent, setNewEvent] = useState({
     EventName: "",
@@ -82,23 +82,21 @@ const FireBaseContextProvider = ({ children }) => {
   const eventsQueryAccordingToUserRole = (userRole, userID) => {
     console.log(userID, "userID");
     console.log(userRole, "userRole");
-    console.log(userRole.toLowerCase().includes("admin"), "userRole");
-    console.log(userRole.toLowerCase().includes("admin manager"), "userRole");
-    console.log(userRole.toLowerCase().includes("franchise"), "userRole");
+    // console.log(userRole.toLowerCase().includes("admin"), "userRole");
+    console.log(userRole.toLowerCase().includes("brand manager"), "userRole");
+    console.log(userRole.toLowerCase().includes("franchise manager"), "userRole");
+    console.log(userRole.toLowerCase().includes("franchise user"), "userRole");
     switch (true) {
-      case userRole.toLowerCase().includes("admin"): {
+      // const options = ["Brand Manager", {label:"Franchise Manager",
+      // options:['10','30']
+      // }, "Franchise User"];
+
+      case userRole.toLowerCase().includes("brand manager"): {
         console.log("currentUserRole admin case");
         setEventsQueryRole(query(EventRefrence));
         break;
       }
-      case userRole.toLowerCase().includes("brand manager"): {
-        console.log("currentUserRole brand manager case");
-        setEventsQueryRole(
-          query(EventRefrence, where("CreatedByID", "==", userID))
-        );
-        break;
-      }
-      case userRole.toLowerCase().includes("franchise"): {
+      case userRole.toLowerCase().includes("franchise manager"): {
         console.log("currentUserRole franchise manager case");
         const franchiseType = userRole.split("-")[1];
         console.log(franchiseType, "franchise manager case");
@@ -107,8 +105,23 @@ const FireBaseContextProvider = ({ children }) => {
         );
         break;
       }
+      case userRole.toLowerCase().includes("franchise user"): {
+        console.log("currentUserRole brand manager case");
+        setEventsQueryRole(
+          query(EventRefrence, where("CreatedByID", "==", userID))
+        );
+        break;
+      }
+      default: {
+        setEventsQueryRole(query(EventRefrence));
+      }
     }
   };
+
+  // function roleIsValid(role) {
+  //   const validRoles = ["admin", "user"]; //To be adapted with your own list of roles
+  //   return validRoles.includes(role);
+  // }
 
   useEffect(() => {
     let unsubscribe;
@@ -121,6 +134,18 @@ const FireBaseContextProvider = ({ children }) => {
         setCurrentUserRole(finaleUser.data().Role);
 
         eventsQueryAccordingToUserRole(finaleUser.data().Role, user.uid);
+
+        localStorage.setItem("REF", JSON.stringify(finaleUser.data().Role));
+
+        // console.log(auth.role , "customClaims");
+        // console.log(user, "user data");
+        // user.testKey = "hello";
+        // if (!roleIsValid("admin")) {
+        //   console.log("is not a valid role");
+        // } else {
+        //   console.log("is a valid role");
+        // }
+        // console.log(user, "user data after");
 
         localStorage.setItem("REF", JSON.stringify(finaleUser.data().Role));
       } else {
@@ -213,7 +238,7 @@ const FireBaseContextProvider = ({ children }) => {
         setCurrentUserRole,
         // setEventsListDataAccordingToUserRole,
         UserRef,
-        
+
         // eventsQueryAccordingToUserRole,
         eventsQueryRole,
         // setEventsListDataAccordingToUserRole,
