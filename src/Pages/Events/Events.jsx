@@ -2,45 +2,50 @@ import React, { useContext, useEffect, useState } from "react";
 import DataTable from "../../Components/DataTable/DataTable";
 import "./Event.css";
 import { FireBaseContext } from "../../Context/FireBase";
-import {
-  collection,
-  getDocs,
-  doc,
-  onSnapshot,
-  getDoc,
-} from "firebase/firestore";
+import { collection, getDocs, doc } from "firebase/firestore";
 export const Events = () => {
   const {
     events,
     getData,
     setEvents,
+    eventsQueryRole,
     EventRefrence,
-    setEventsListDataAccordingToUserRole,
   } = useContext(FireBaseContext);
   const [informations, setInformations] = useState([]);
   const [sub, setSub] = useState([]);
   const [combinedData, setCombinedData] = useState([]);
 
   useEffect(() => {
-    getData(EventRefrence, setInformations);
-    const fetchData = async () => {
-      const eventObj = await getDocs(EventRefrence);
-      const EventDetails = eventObj.docs.map(async (maidDoc) => {
-        const mainDocData = { id: maidDoc.id, ...maidDoc.data() };
-        const ref = doc(EventRefrence, maidDoc.id);
-        const infoCollection = collection(ref, "Subscribers");
-        const subObj = await getDocs(infoCollection);
-        const subData = subObj.docs.map((subDoc) => ({
-          id: subDoc.id,
-          ...subDoc.data(),
-        }));
-        mainDocData["Team"] = subData;
-        return mainDocData;
-      });
-      setCombinedData(eventObj);
-    };
-    fetchData();
-  }, []);
+    // query to filter evemts according to role
+
+    console.log(eventsQueryRole, "Events query role");
+    if (eventsQueryRole) {
+      console.log(eventsQueryRole, "Events query role");
+
+      getData(eventsQueryRole, setInformations);
+
+      const fetchData = async () => {
+        // const eventObj = await getDocs(EventRefrence);
+        const eventObj = await getDocs(eventsQueryRole);
+        console.log(eventObj, "eventObj");
+        const EventDetails = eventObj.docs.map(async (maidDoc) => {
+          const mainDocData = { id: maidDoc.id, ...maidDoc.data() };
+          const ref = doc(EventRefrence, maidDoc.id);
+          const infoCollection = collection(ref, "Subscribers");
+          const subObj = await getDocs(infoCollection);
+          const subData = subObj.docs.map((subDoc) => ({
+            id: subDoc.id,
+            ...subDoc.data(),
+          }));
+          mainDocData["Team"] = subData;
+          return mainDocData;
+        });
+        setCombinedData(eventObj);
+      };
+
+      fetchData();
+    }
+  }, [eventsQueryRole]);
 
   useEffect(() => {
     let x = combinedData.docs?.map((item) => ({
@@ -123,8 +128,8 @@ export const Events = () => {
           return item;
         });
         const results = await Promise.all(promises);
-        // setEvents(result);
-        setEvents([...setEventsListDataAccordingToUserRole(results)]);
+        setEvents(results);
+        // setEvents([...setEventsListDataAccordingToUserRole(results)]);
       };
       fetchDataForItems();
     }
