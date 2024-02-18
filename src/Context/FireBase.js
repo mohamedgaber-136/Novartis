@@ -25,7 +25,7 @@ const FireBaseContextProvider = ({ children }) => {
   const [updateUser, setUpdateUser] = useState(null);
   const [Subscribers, setSubscribers] = useState([]);
   const [roleCondition, setRole] = useState("");
-  const [currentUserRole, setCurrentUserRole] = useState("");
+  const [currentUserRole, setCurrentUserRole] = useState('');
   const [eventsQueryRole, setEventsQueryRole] = useState(null);
   const [newEvent, setNewEvent] = useState({
     EventName: "",

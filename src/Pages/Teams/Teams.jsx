@@ -2,11 +2,13 @@ import React, { useContext, useEffect, useState } from 'react'
 import TeamsTable from '../../Components/TeamsTable/TeamsTable'
 import { FireBaseContext } from '../../Context/FireBase'
 import { collection, getDocs,query,onSnapshot } from 'firebase/firestore'
-
+import { Navigate } from "react-router-dom";
 export const Teams = () => {
-const {teams,setTeams,TeamsRefrence} = useContext(FireBaseContext)
+const {teams,setTeams,TeamsRefrence,currentUserRole} = useContext(FireBaseContext)
 const [franchiseTen,setfranchiseTen] = useState([])
 const [franchiseThirty,setfranchiseThirty] = useState([])
+console.log(currentUserRole,'currentUserRole')
+
 const subCollectionQueryTen = query(
   collection(TeamsRefrence,'10', 'Events')
 );
@@ -35,10 +37,15 @@ useEffect(()=>{
 },[
   franchiseTen,franchiseThirty
 ])
-  return (
-    <div className='d-flex flex-column container gap-3 EventsPageParent '>
+
+
+
+
+    return (
+      <div className='d-flex flex-column container gap-3 EventsPageParent '>
       <h2>Teams</h2>
       <TeamsTable  row={teams} />
       </div>
   )
 }
+
