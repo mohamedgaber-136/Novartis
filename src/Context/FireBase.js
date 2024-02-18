@@ -79,20 +79,22 @@ const FireBaseContextProvider = ({ children }) => {
   const [currentUsr, setCurrentUser] = useState();
   const [loading, setLoading] = useState(true);
   const eventsQueryAccordingToUserRole = (userRole, userID) => {
+    console.log(userID, "userID");
+    console.log(userRole, "userRole");
+    console.log(userRole.toLowerCase().includes("admin"), "userRole");
+    console.log(userRole.toLowerCase().includes("admin manager"), "userRole");
+    console.log(userRole.toLowerCase().includes("franchise"), "userRole");
     switch (true) {
-      case userRole.toLowerCase().includes("admin"): {
+      // const options = ["Brand Manager", {label:"Franchise Manager",
+      // options:['10','30']
+      // }, "Franchise User"];
+
+      case userRole.toLowerCase().includes("brand manager"): {
         console.log("currentUserRole admin case");
         setEventsQueryRole(query(EventRefrence));
         break;
       }
-      case userRole.toLowerCase().includes("brand manager"): {
-        console.log("currentUserRole brand manager case");
-        setEventsQueryRole(
-          query(EventRefrence, where("CreatedByID", "==", userID))
-        );
-        break;
-      }
-      case userRole.toLowerCase().includes("franchise"): {
+      case userRole.toLowerCase().includes("franchise manager"): {
         console.log("currentUserRole franchise manager case");
         const franchiseType = userRole.split("-")[1];
         console.log(franchiseType, "franchise manager case");
@@ -101,9 +103,13 @@ const FireBaseContextProvider = ({ children }) => {
         );
         break;
       }
-      default:
     }
   };
+
+  // function roleIsValid(role) {
+  //   const validRoles = ["admin", "user"]; //To be adapted with your own list of roles
+  //   return validRoles.includes(role);
+  // }
 
   useEffect(() => {
     let unsubscribe;
@@ -116,6 +122,7 @@ const FireBaseContextProvider = ({ children }) => {
         console.log(finaleUser.data(),'finaleUser')
         setCurrentUserRole(finaleUser.data().Role);
         eventsQueryAccordingToUserRole(finaleUser.data().Role, user.uid);
+
         localStorage.setItem("REF", JSON.stringify(finaleUser.data().Role));
         localStorage.setItem("User", JSON.stringify(finaleUser.data()));
       } else {
@@ -206,7 +213,7 @@ const FireBaseContextProvider = ({ children }) => {
         setCurrentUserRole,
         // setEventsListDataAccordingToUserRole,
         UserRef,
-        
+
         // eventsQueryAccordingToUserRole,
         eventsQueryRole,
         // setEventsListDataAccordingToUserRole,

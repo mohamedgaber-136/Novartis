@@ -7,7 +7,7 @@ export const Protected = ({ children, nestedRoute }) => {
 
   useEffect(() => {
     if (currentUserRole) console.log(currentUserRole, "role");
-    setIsNotAuthorized(currentUserRole.toLowerCase().includes("franchise"));
+    setIsNotAuthorized(!currentUserRole.toLowerCase().includes("brand Manager"));
   }, [currentUserRole]);
 
   // const isNotAuthorized = currentUserRole.toLowerCase().includes("franchise");

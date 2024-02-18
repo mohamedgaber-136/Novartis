@@ -34,7 +34,7 @@ export const Navbar = ({ navAppear }) => {
 
   useEffect(() => {
     if (currentUserRole)
-      setIsAllowedUser(!currentUserRole.toLowerCase().includes("franchise"));
+      setIsAllowedUser(currentUserRole.toLowerCase().includes("brand manager"));
   }, [currentUserRole]);
 
   const MenuData = [
