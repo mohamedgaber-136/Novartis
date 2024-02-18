@@ -6,11 +6,9 @@ import { saveAs } from "file-saver";
 
 const ExportSfda = ({ data, filename, sheetname }) => {
   const { EventRefrence } = useContext(FireBaseContext);
-
   const handleExport = async () => {
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet(sheetname);
-
     const finalDataToExport = [];
     await Promise.all(
       data?.map(async (item) => {

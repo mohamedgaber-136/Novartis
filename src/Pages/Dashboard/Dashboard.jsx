@@ -29,11 +29,11 @@ export const Dashboard = () => {
   const [eventsAccordingToRole, setEventsAccordingToRole] = useState([]);
 
   useEffect(() => {
-    if (eventsQueryRole) {
-      getData(eventsQueryRole, setData);
-    }
-    // getData(EventRefrence, setData);
-  }, [eventsQueryRole]);
+    // if (eventsQueryRole) {
+    //   getData(eventsQueryRole, setData);
+    // }
+    getData(EventRefrence, setData);
+  }, []);
 
   useEffect(() => {
     if (data.length !== 0) {

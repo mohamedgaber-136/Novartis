@@ -103,6 +103,7 @@ const FireBaseContextProvider = ({ children }) => {
         );
         break;
       }
+      default:
     }
   };
 

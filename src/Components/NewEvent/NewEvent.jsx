@@ -159,7 +159,7 @@ export default function NewEvent() {
       AccpetAllTermss: false,
     });
     // setTriggerNum(triggerNum + 1);
-    // navigation("/app/events");
+    navigation("/app/events");
   };
   useEffect(() => {
     if (activeStep == 1) {

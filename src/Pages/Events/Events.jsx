@@ -19,14 +19,14 @@ export const Events = () => {
     // query to filter evemts according to role
 
     console.log(eventsQueryRole, "Events query role");
-    if (eventsQueryRole) {
+    // if (eventsQueryRole) {
       console.log(eventsQueryRole, "Events query role");
 
-      getData(eventsQueryRole, setInformations);
+      getData(EventRefrence, setInformations);
 
       const fetchData = async () => {
         // const eventObj = await getDocs(EventRefrence);
-        const eventObj = await getDocs(eventsQueryRole);
+        const eventObj = await getDocs(EventRefrence);
         console.log(eventObj, "eventObj");
         const EventDetails = eventObj.docs.map(async (maidDoc) => {
           const mainDocData = { id: maidDoc.id, ...maidDoc.data() };
@@ -41,11 +41,11 @@ export const Events = () => {
           return mainDocData;
         });
         setCombinedData(eventObj);
-      };
+      // };
 
       fetchData();
     }
-  }, [eventsQueryRole]);
+  }, []);
 
   useEffect(() => {
     let x = combinedData.docs?.map((item) => ({

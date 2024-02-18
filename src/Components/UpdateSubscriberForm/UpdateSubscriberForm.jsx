@@ -106,7 +106,7 @@ export const UpdateSubscriberForm = ({ user ,handleClose}) => {
                     City: e.target[14].value,
                     // image: ImageData(),
                     CostPerDelegate:e.target[16].value,
-                    TransferOfValue:valus
+                    // TransferOfValue:valus
                   };
                   await updateDoc(userData, updateSub);
                   console.log(valus)
@@ -222,7 +222,7 @@ export const UpdateSubscriberForm = ({ user ,handleClose}) => {
                   defaultValue={updatedData?.CostPerDelegate}
                 />
               </div>
-              <div className="w-50 d-flex justify-content-center">
+              {/* <div className="w-50 d-flex justify-content-center">
 <Autocomplete
         multiple
         id="tags-outlined"
@@ -250,7 +250,7 @@ export const UpdateSubscriberForm = ({ user ,handleClose}) => {
         )}
         
       />
-              </div>
+              </div> */}
               <div className="w-50 d-flex justify-content-center">
                 <button className="w-75 p-1 m-2 rounded rounded-2 border-0 border text-white">
                   Save
