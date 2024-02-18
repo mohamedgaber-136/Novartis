@@ -123,7 +123,7 @@ const ExportSfda = ({ data, filename, sheetname }) => {
         }),
       ];
       worksheet.addRow([...holder]);
-
+ 
       const rowIndex = index + 2;
       const row = worksheet.getRow(rowIndex);
       row.eachCell({ includeEmpty: true }, (cell) => {
@@ -314,7 +314,7 @@ const ExportSfda = ({ data, filename, sheetname }) => {
 
   return (
     <i className="fa-solid fa-download" onClick={handleExport}>
-      <span className="fs-6 fw-light"> sfda</span>{" "}
+      <span className="fs-6 fw-light"> SFDA</span>{" "}
     </i>
   );
 };
