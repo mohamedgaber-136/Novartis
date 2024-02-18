@@ -46,7 +46,7 @@ export const Dashboard = () => {
     <div className="d-flex flex-column gap-4 align-items-start ">
       {/* <Notification/> */}
       <div className="container">
-        <h2 className="my-3">Hi,mohamed</h2>
+        <h2 className="my-3">Hi , {(JSON.parse(localStorage.getItem('User'))).Name}</h2>
         <div className="d-flex  justify-content-between align-item-center w-100">
           <div className="   d-flex flex-column gap-2  align-items-start DashboardTableParen w-100">
             <div className="d-flex align-items-center justify-content-start gap-2 w-100  ">

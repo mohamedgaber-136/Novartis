@@ -48,20 +48,19 @@ fetchUser()
 },[currentUsr])
 if(Current){
   return (
-    <div className="  d-flex flex-column container gap-3 EventsPageParent">
-      <h2>Profile</h2>
-      <div className="px-5">
-        <h2 className="mb-5 px-2">Personal Data</h2>
+    <div className="  d-flex flex-column container gap-3 EventsPageParent ">
+      <div className="">
+        <h5 className="mb-3">Personal Data</h5>
         <Formik>
           {() => (
             
             <Form
               onSubmit={handleSubmit}
-              className="FormDataParent pt-5 bg-white container  rounded rounded-2 px-2 px-md-3 pt-3"
+              className="FormDataParent  bg-white container   rounded rounded-2  "
             >
-            <div className="d-flex w-100 gap-5">
+            <div className="d-flex w-100 gap-2">
 
-              <div className="d-flex gap-5 flex-column w-50  ">
+              <div className="d-flex gap-4 flex-column w-50  ">
                 {InputsDataColOne.map((item, indx) => (
                   <TextField
                     key={indx}
@@ -73,7 +72,7 @@ if(Current){
                   />
                 ))}
               </div>
-              <div className="d-flex gap-5 flex-column w-50 ">
+              <div className="d-flex gap-4 flex-column w-50 ">
                 {InputsDataColTwo.map((item, indx) => (
                   <TextField
                     key={indx}
@@ -100,12 +99,25 @@ if(Current){
                 Save
            </button>
   
-              <ProfileReport /> 
+              {/* <ProfileReport />  */}
             </Form>
           )}
         </Formik>
       </div>
     </div>
   );
-};
+}else{
+ return( <div className="w-100 d-flex justify-content-center">
+  <div className="dot-spinner">
+    <div className="dot-spinner__dot"></div>
+    <div className="dot-spinner__dot"></div>
+    <div className="dot-spinner__dot"></div>
+    <div className="dot-spinner__dot"></div>
+    <div className="dot-spinner__dot"></div>
+    <div className="dot-spinner__dot"></div>
+    <div className="dot-spinner__dot"></div>
+    <div className="dot-spinner__dot"></div>
+  </div>
+</div>)
+}
 }

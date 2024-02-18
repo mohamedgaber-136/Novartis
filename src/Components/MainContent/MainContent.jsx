@@ -4,7 +4,7 @@ import { Outlet} from 'react-router-dom'
 export const MainContent = () => {
    
   return (
-    <div className='MainContent py-5'>
+    <div className='MainContent py-3'>
               <ProfileNav/>
        <Outlet/>
     </div>

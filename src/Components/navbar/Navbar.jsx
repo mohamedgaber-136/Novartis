@@ -25,9 +25,10 @@ export const Navbar = ({ navAppear }) => {
       case "/app/profile":
         setFocusedButton(3);
         break;
-      case "/app/teams":
-        setFocusedButton(2);
-        break;
+      // case "/app/teams":
+      //   setFocusedButton(2);
+        // break;
+        default:
     }
   }, [pathname]);
 
@@ -52,11 +53,11 @@ export const Navbar = ({ navAppear }) => {
       data: "Teams",
       nav: "teams",
     },
-    {
-      icon: "fa-solid fa-file-lines",
-      data: "Profile",
-      nav: "Profile",
-    },
+    // {
+    //   icon: "fa-solid fa-file-lines",
+    //   data: "Profile",
+    //   nav: "Profile",
+    // },
     isAllowedUser && {
       icon: "fa-solid fa-people-group",
       data: "Users",

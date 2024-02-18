@@ -103,6 +103,13 @@ export default function NewEvent() {
     }
   };
   const SendDataToFireBase = async () => {
+    const ref= doc(TeamsRefrence,newEvent.Franchise)
+    const refCollec = collection(ref,'Events')
+    await addDoc(refCollec, {
+      // ID: item,
+      CreatedByID: currentUsr,
+      ...newEvent,
+    });
     await addDoc(EventRefrence, { ...newEvent, CreatedByID: currentUsr }).then(
       async (snapshot) => {
         const currentUserName = await getDoc(
@@ -126,11 +133,12 @@ export default function NewEvent() {
     );
 
     // add notification for this event
-    // const ref= collection(TeamsRefrence,newEvent.Franchise)
+    console.log(ref)
+    
     // const FranchiseRef = doc(TeamsRefrence,newEvent.Franchise);
     // console.log(FranchiseRef)
     // const collRef = collection(FranchiseRef, "Events");
-    // await addDoc(collRef, { ...newEvent, UserID: currentUsr });
+    // await addDoc(ref, { ...newEvent, UserID: currentUsr });
     setNewEvent({
       EventName: "",
       CostperDelegate: "",
@@ -151,7 +159,7 @@ export default function NewEvent() {
       AccpetAllTermss: false,
     });
     // setTriggerNum(triggerNum + 1);
-    navigation("/app/events");
+    // navigation("/app/events");
   };
   useEffect(() => {
     if (activeStep == 1) {

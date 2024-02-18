@@ -121,6 +121,7 @@ export default function AlertBadge() {
     await updateDoc(doc(database, "notifications", notifyID), {
       isReadUsersID: [...currentNotification?.isReadUsersID, currentUsr],
     });
+    // const evenDoc = doc(,NewEventID)
     currentNotification.isRead = true;
     navigation(`/app/subscribers/${EventID}/${NewEventID}`);
   };
@@ -143,7 +144,7 @@ export default function AlertBadge() {
             horizontal: "left",
           }}
           badgeContent={triggerNum}
-          color="error"
+          color="warning"
         >
           <NotificationsIcon />
         </Badge>

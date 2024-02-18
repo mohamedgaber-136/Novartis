@@ -122,7 +122,7 @@ export const StepOne = () => {
               </div>
               <div className="container d-flex flex-column gap-5">
                 <div className="d-flex two flex-column flex-md-row  gap-5  gap-md-5 px-md-4 px-2 gap2  justify-content-center align-item-center">
-                  <div className="w-50   errorParent d-flex justify-content-center align-items-end py-1 " >
+                  <div className="w-50   errorParent d-flex justify-content-center align-items-end " >
                     <FranchisedropDown  SetError={setFormErrors}
                       formErrors={formErrors}/>
                     <small className="text-danger errorMsg">
@@ -165,7 +165,7 @@ export const StepOne = () => {
                   <h6>
                     <b className="text-secondary">From</b>
                   </h6>
-                  <div className="d-flex justify-content-between flex-column  flex-md-row align-items-center gap-3">
+                  <div className="d-flex justify-content-between  flex-md-row align-items-center gap-3">
                     <div className="w-50 errorParent  dropDownBorder p-2 greyBgc">
                       <DateByYMD
                         condition={true}
@@ -193,7 +193,7 @@ export const StepOne = () => {
                   <h6>
                     <b className="text-secondary">To</b>
                   </h6>
-                  <div className="d-flex  justify-content-between flex-column flex-md-row  align-items-center gap-3 ">
+                  <div className="d-flex  justify-content-between  flex-md-row  align-items-center gap-3 ">
                     <div className="w-50 dropDownBorder p-2 errorParent greyBgc ">
                       <DateByYMD
                         condition={false}

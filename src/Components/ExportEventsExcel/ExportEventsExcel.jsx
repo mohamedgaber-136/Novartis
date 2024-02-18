@@ -7,7 +7,7 @@ const ExportEventsExcel = ({ data, filename, sheetname }) => {
     'Event Name':item.EventName,
     "Franchise Name":item.Franchise.toString(),
     id:item.Id,
-    City:item.City,
+    City:item.City.map((city) => city.types).join(","),
     "Cost per Delegate":item.CostperDelegate,
     "Event Cost":item.EventCost.toString(),
     PO:item.PO,

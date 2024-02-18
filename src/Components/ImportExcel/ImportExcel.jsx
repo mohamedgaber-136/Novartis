@@ -1,7 +1,9 @@
 import React from "react";
+import { useState } from "react";
 import * as XLSX from "xlsx";
 import Button from '@mui/material/Button';
  const ImportExcel = () => {
+  const [data, setData] = useState(null);
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -19,12 +21,13 @@ import Button from '@mui/material/Button';
       // Process the workbook data (e.g., extract sheets, data, etc.)
       const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
       const Finaledata = XLSX.utils.sheet_to_json(firstSheet, { header: 1 });
+      setData(Finaledata)
     };
 
     reader.readAsBinaryString(file);
    
   };
-
+console.log(data)
   return (
   
   <Button   id="fade-button" className="d-flex flex-column "   >

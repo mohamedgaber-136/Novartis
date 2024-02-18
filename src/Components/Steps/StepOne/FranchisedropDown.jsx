@@ -14,6 +14,10 @@ export const FranchisedropDown = ({ SetError, formErrors }) => {
       SetError({ ...formErrors, Franchise: "Required" });
     }
   }
+  const data = [   { types: "Cardio Metabolic Franchise" },
+  { types: "RetinaFranchise ",label:'Retina Franchise ' },
+  { types: "MedicalFranchise" ,label:'Medical Franchise'},
+ ]
   return (
     <>
       <FormControl variant="standard" className=" w-100">
@@ -31,9 +35,10 @@ export const FranchisedropDown = ({ SetError, formErrors }) => {
           <MenuItem value="">
             <em>None</em>
           </MenuItem>
-          <MenuItem value={10}>Ten</MenuItem>
-          <MenuItem value={20}>Twenty</MenuItem>
-          <MenuItem value={30}>Thirty</MenuItem>
+          {
+            data.map((item,index)=><MenuItem value={item.types} key={index}>{item.label}</MenuItem>
+            )
+          }
         </Select>
       </FormControl>
     </>

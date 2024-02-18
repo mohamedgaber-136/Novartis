@@ -15,17 +15,17 @@ export const FireBaseContext = createContext();
 const FireBaseContextProvider = ({ children }) => {
   const [authorized, setAuthorized] = useState(false);
   const [IdIncluded, setId] = useState(false);
-  const [userId, SetuserId] = useState("");
+  // const [userId, SetuserId] = useState("");
   const [rows, setRows] = useState([]);
   const [triggerNum, setTriggerNum] = useState(0);
   const [events, setEvents] = useState([]);
   const [teams, setTeams] = useState([]);
   const [filterdData, setFilterd] = useState([]);
-  const [imgUrl, setImgUrl] = useState(null);
+  // const [imgUrl, setImgUrl] = useState(null);
   const [updateUser, setUpdateUser] = useState(null);
   const [Subscribers, setSubscribers] = useState([]);
   const [roleCondition, setRole] = useState("");
-  const [currentUserRole, setCurrentUserRole] = useState('');
+  const [currentUserRole, setCurrentUserRole] = useState("");
   const [eventsQueryRole, setEventsQueryRole] = useState(null);
   const [newEvent, setNewEvent] = useState({
     EventName: "",
@@ -60,7 +60,7 @@ const FireBaseContextProvider = ({ children }) => {
   const EventRefrence = collection(database, "Event");
   const TeamsRefrence = collection(database, "Teams");
   const SubscribersRefrence = collection(database, "Subscribers");
-  const deletedRef = collection(database, "Deleted");
+  // const deletedRef = collection(database, "Deleted");
   const UserRef = collection(database, "Users");
   const EventsDeletedRef = collection(database, "EventsDeleted");
   const SubscribersDeletedRef = collection(database, "SubscribersDeleted");
@@ -78,13 +78,7 @@ const FireBaseContextProvider = ({ children }) => {
   };
   const [currentUsr, setCurrentUser] = useState();
   const [loading, setLoading] = useState(true);
-
   const eventsQueryAccordingToUserRole = (userRole, userID) => {
-    console.log(userID, "userID");
-    console.log(userRole, "userRole");
-    console.log(userRole.toLowerCase().includes("admin"), "userRole");
-    console.log(userRole.toLowerCase().includes("admin manager"), "userRole");
-    console.log(userRole.toLowerCase().includes("franchise"), "userRole");
     switch (true) {
       case userRole.toLowerCase().includes("admin"): {
         console.log("currentUserRole admin case");
@@ -107,6 +101,7 @@ const FireBaseContextProvider = ({ children }) => {
         );
         break;
       }
+      default:
     }
   };
 
@@ -118,11 +113,11 @@ const FireBaseContextProvider = ({ children }) => {
         setCurrentUser(user.uid);
         const users = doc(UserRef, user.uid);
         const finaleUser = await getDoc(users);
+        console.log(finaleUser.data(),'finaleUser')
         setCurrentUserRole(finaleUser.data().Role);
-
         eventsQueryAccordingToUserRole(finaleUser.data().Role, user.uid);
-
         localStorage.setItem("REF", JSON.stringify(finaleUser.data().Role));
+        localStorage.setItem("User", JSON.stringify(finaleUser.data()));
       } else {
         setCurrentUser(null);
         setCurrentUserRole(null);
@@ -174,7 +169,6 @@ const FireBaseContextProvider = ({ children }) => {
   return (
     <FireBaseContext.Provider
       value={{
-        SetuserId,
         roleCondition,
         setRole,
         setCurrentUser,
@@ -191,7 +185,6 @@ const FireBaseContextProvider = ({ children }) => {
         setFilterd,
         rows,
         setRows,
-        setImgUrl,
         triggerNum,
         setTriggerNum,
         getData,

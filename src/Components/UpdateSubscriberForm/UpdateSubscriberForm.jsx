@@ -104,12 +104,13 @@ export const UpdateSubscriberForm = ({ user ,handleClose}) => {
                     Organization: e.target[10].value,
                     LicenseID: e.target[12].value,
                     City: e.target[14].value,
-                    image: ImageData(),
+                    // image: ImageData(),
                     CostPerDelegate:e.target[16].value,
                     TransferOfValue:valus
                   };
                   await updateDoc(userData, updateSub);
-                  // setTriggerNum(triggerNum + 1);
+                  console.log(valus)
+                  // console.log(valus)
               
         swal({
           icon: "success",
@@ -117,7 +118,7 @@ export const UpdateSubscriberForm = ({ user ,handleClose}) => {
        }
     }) 
   }
-       console.log(updatedData)
+  
   useEffect(() => {
     getdata();
     setUpdated();
@@ -231,7 +232,7 @@ export const UpdateSubscriberForm = ({ user ,handleClose}) => {
           { types: "phys" },
         ]}
         getOptionLabel={(option) => option.types}
-        value={updatedData["TransferOfValue"]}
+        // value={updatedData["TransferOfValue"][0]}
         filterSelectedOptions 
        onChange={(e,value)=>{
         setValues(value)
