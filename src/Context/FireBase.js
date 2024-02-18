@@ -168,6 +168,8 @@ const FireBaseContextProvider = ({ children }) => {
         currentUserRole,
         setCurrentUserRole,
         setEventsListDataAccordingToUserRole,
+        UserRef
+        
       }}
     >
       {!loading && children}

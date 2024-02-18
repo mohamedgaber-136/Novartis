@@ -1,37 +1,52 @@
 import { Form, Formik } from "formik";
 import EditIcon from "@mui/icons-material/Edit";
 import ProfileReport from "../../Components/ProfileReport/ProfileReport";
-import {  useState } from 'react';
+import {  useContext, useEffect, useState } from 'react';
 import TextField from '@mui/material/TextField';
+import { FireBaseContext } from "../../Context/FireBase";
+import { doc, getDoc } from "firebase/firestore";
 export const Profile = () => {
   const [disabledValue,setDisabled]=useState(true)
+  const {currentUsr,UserRef} = useContext(FireBaseContext)
+  const [Current,setCurrent] = useState(null) 
   const InputsDataColOne = [
     {
       label: "Name",
-      defaultValue: "mohamed",
+      defaultValue: Current?.Name,
       type: "text",
     },
     {
       label: "Telephone",
-      defaultValue: "+212345678",
+      defaultValue: Current?.PhoneNumber,
       type: "text",
     },
   ];
   const InputsDataColTwo = [
     {
-      label: "UserName",
-      defaultValue: "Mohamed Ahmed Gaber",
+      label: "Email",
+      defaultValue:Current?.Email,
       type: "text",
     },
-    {
-      label: "Password",
-      defaultValue: "1234564",
-      type: "password",
-    },
+    // {
+    //   label: "Password",
+    //   defaultValue: Current?.Password,
+    //   type: "password",
+    // },
   ];
+  console.log(currentUsr)
 const handleSubmit = (e)=>{
   e.preventDefault()
 }
+useEffect(()=>{
+const fetchUser = async () =>{
+  const docRef = doc(UserRef,currentUsr)
+  const user = await getDoc(docRef)
+  setCurrent(user.data())
+}
+
+fetchUser()
+},[currentUsr])
+if(Current){
   return (
     <div className="  d-flex flex-column container gap-3 EventsPageParent">
       <h2>Profile</h2>
@@ -93,3 +108,4 @@ const handleSubmit = (e)=>{
     </div>
   );
 };
+}
