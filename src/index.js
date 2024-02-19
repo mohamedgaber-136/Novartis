@@ -29,6 +29,7 @@ import { Users } from "./Pages/Users/Users.jsx";
 import UpdateSubScriber from "./Pages/UpdateSubScriber/UpdateSubScriber.jsx";
 import { DeletedData } from "./Pages/DeletedData/DeletedData.jsx";
 import { Protected } from "./Components/ProtectedRouted/Protected.jsx";
+import { MyEvents } from "./Pages/MyEvents/MyEvents.jsx";
 async function delayForDemo(promise) {
   return new Promise((resolve) => {
     setTimeout(resolve, 4000);
@@ -82,6 +83,8 @@ const router = createBrowserRouter(
               </Protected>
             }
           />
+         
+            <Route path='MyEvents' element={<MyEvents/>}/> 
           <Route
             path="Users"
             element={
@@ -90,7 +93,6 @@ const router = createBrowserRouter(
               </Protected>
             }
           />
-
           <Route path="DeletedData" element={<DeletedData />} />
         </Route>
       </Route>

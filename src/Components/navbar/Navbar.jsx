@@ -11,6 +11,7 @@ export const Navbar = ({ navAppear }) => {
   const { pathname } = useLocation();
   const [focusedButton, setFocusedButton] = useState(null);
   const [isAllowedUser, setIsAllowedUser] = useState(null);
+  console.log(isAllowedUser)
   const handleFocus = (id) => {
     setFocusedButton(id);
   };
@@ -25,9 +26,9 @@ export const Navbar = ({ navAppear }) => {
       case "/app/profile":
         setFocusedButton(3);
         break;
-      // case "/app/teams":
-      //   setFocusedButton(2);
-        // break;
+      case "/app/teams":
+        setFocusedButton(2);
+        break;
         default:
     }
   }, [pathname]);
@@ -48,11 +49,11 @@ export const Navbar = ({ navAppear }) => {
       data: "Events",
       nav: "events",
     },
-    // isAllowedUser && {
-    //   icon: "fa-solid fa-users",
-    //   data: "Teams",
-    //   nav: "teams",
-    // },
+    isAllowedUser && {
+      icon: "fa-solid fa-users",
+      data: "Teams",
+      nav: "teams",
+    },
     // {
     //   icon: "fa-solid fa-file-lines",
     //   data: "Profile",

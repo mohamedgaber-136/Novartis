@@ -16,29 +16,32 @@ import Paper from "@mui/material/Paper";
 import Checkbox from "@mui/material/Checkbox";
 import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
-import TextField from "@mui/material/TextField";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { visuallyHidden } from "@mui/utils";
-import FilterBtn from "../FilterBtn/FilterBtn";
-import { SearchContext } from "../../Context/SearchContext";
+import swal from "sweetalert";
 import { FireBaseContext } from "../../Context/FireBase";
-import ExportToExcelButton from "../ExportBtn/ExportToExcelButton";
+import ExportDropDown from '../ExportDropDown/ExportDropDown'
 import { useNavigate } from "react-router-dom";
-import { deleteDoc, doc } from "firebase/firestore";
+import {
+  deleteDoc,
+  doc,
+  serverTimestamp,
+  getDoc,
+  setDoc,
+} from "firebase/firestore";
 import SearchText from "../SearchText/SearchText";
-export default function TeamsTable({ row}) {
+import ImportExcel from "../ImportExcel/ImportExcel";
+import { SearchFormik } from "../SearchFormik/SearchFormik";
+export default function FranchiseTable({ row ,sub}) {
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("calories");
   const [selected, setSelected] = React.useState([]);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
-  const { EventRefrence  } = React.useContext(FireBaseContext);
-  const [rows,setRows] = React.useState([])
-  const navigate =useNavigate()
-  React.useEffect(() => {
-  setRows(row);
-
-  }, [row]);
+  const { EventRefrence, EventsDeletedRef, rows, setRows } = React.useContext(
+    FireBaseContext
+  );
+  const navigate = useNavigate();
   function descendingComparator(a, b, orderBy) {
     if (b[orderBy] < a[orderBy]) {
       return -1;
@@ -64,28 +67,56 @@ export default function TeamsTable({ row}) {
     });
     return stabilizedThis.map((el) => el[0]);
   }
-
+  React.useEffect(() => {
+    setRows(row);
+  }, [row]);
   // HeadTitles ----------------------------------------------
   const headCells = [
     {
-      id: "Name",
+      id: "Id",
       numeric: false,
-      disablePadding: false,
-      label: "Name",
+      disablePadding: true,
+      label: "ID",
     },
     {
-      id: "NumberOfEvents",
+      id: "EventName",
       numeric: true,
       disablePadding: false,
-      label: "Number of Events",
+      label: "NAME",
     },
     {
-      id: "GoToEvents",
+      id: "CostperDelegate",
       numeric: true,
       disablePadding: false,
-      label: "Go To Events",
+      label: "COST / DELEGATE	",
+    },
+    {
+      id: "EventCost",
+      numeric: true,
+      disablePadding: false,
+      label: "Event Cost",
+    },
+    {
+      id: "StartDate",
+      numeric: true,
+      disablePadding: false,
+      label: "Start Date",
+    },
+    {
+      id: "CreatedAt",
+      numeric: true,
+      disablePadding: false,
+      label: "Created At",
+    },
+    {
+      id: "Status",
+      numeric: true,
+      disablePadding: false,
+      label: "Status",
     },
   ];
+  // eventCost
+
   // Sorting---Head /--------------------------------
   function EnhancedTableHead(props) {
     const {
@@ -103,11 +134,22 @@ export default function TeamsTable({ row}) {
     return (
       <TableHead>
         <TableRow>
+          <TableCell padding="checkbox">
+            <Checkbox
+              color="primary"
+              indeterminate={numSelected > 0 && numSelected < rowCount}
+              checked={rowCount > 0 && numSelected === rowCount}
+              onChange={onSelectAllClick}
+              inputProps={{
+                "aria-label": "select all desserts",
+              }}
+            />
+          </TableCell>
           {headCells.map((headCell) => (
             <TableCell
               key={headCell.id}
               align={headCell.numeric ? "left" : "left"}
-              padding={"normal"}
+              padding={headCell.disablePadding ? "none" : "normal"}
               sortDirection={orderBy === headCell.id ? order : false}
             >
               <TableSortLabel
@@ -143,7 +185,15 @@ export default function TeamsTable({ row}) {
     setOrder(isAsc ? "desc" : "asc");
     setOrderBy(property);
   };
-
+  const statusCase = (status) => {
+    if (status === "Completed") {
+      return "bg-danger";
+    } else if (status === "Started") {
+      return "bg-success";
+    } else {
+      return "bg-warning";
+    }
+  };
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
       const newSelected = rows.map((n) => n.ID);
@@ -156,7 +206,6 @@ export default function TeamsTable({ row}) {
   const handleClick = (event, id) => {
     let newSelected = [];
     const selectedIndex = selected.indexOf(id);
-    console.log(id);
     if (selectedIndex === -1) {
       newSelected = newSelected.concat(selected, id);
     } else if (selectedIndex === 0) {
@@ -199,136 +248,201 @@ export default function TeamsTable({ row}) {
   );
   //  Delet ----------------------------
   const DeleteField = (arr) => {
-    arr.map(async (item) => {
-      const ref = doc(EventRefrence, item);
-      await deleteDoc(ref);
+    swal({
+      title: "Are you sure You want Delete this Event?",
+      icon: "warning",
+      buttons: true,
+      dangerMode: true,
+    }).then((willDelete) => {
+      if (willDelete) {
+        swal({
+          icon: "success",
+        });
+        arr.map(async (item) => {
+          const ref = doc(EventRefrence, item);
+          const info = await getDoc(ref);
+          await setDoc(doc(EventsDeletedRef, item), {
+            ID: item,
+            timing: serverTimestamp(),
+            ...info.data(),
+          });
+          await deleteDoc(ref);
+        });
+      }
     });
   };
   //  /-----------ToolBar
-  // function EnhancedTableToolbar(props) {
-  //   const { numSelected } = props;
+  function EnhancedTableToolbar(props) {
+    const { numSelected } = props;
 
-  //   return (
-  //     <Toolbar
-  //       sx={{
-  //         pl: { sm: 2 },
-  //         pr: { xs: 1, sm: 1 },
-  //         ...(numSelected > 0 && {
-  //           bgcolor: (theme) =>
-  //             alpha(
-  //               theme.palette.primary.main,
-  //               theme.palette.action.activatedOpacity
-  //             ),
-  //         }),
-  //       }}
-  //     >
-  //       {numSelected > 0 ? (
-  //         <Typography
-  //           sx={{ flex: "1 1 100%" }}
-  //           color="inherit"
-  //           variant="subtitle1"
-  //           component="div"
-  //         >
-  //           {numSelected} selected
-  //         </Typography>
-  //       ) : (
-  //         <Typography
-  //           sx={{ flex: "0 1 100%" }}
-  //           variant="h2"
-  //           id="tableTitle"
-  //           component="div"
-  //         >
-  //           <div className="  d-flex gap-3 gap-md-5 fs-6 text-primary dateTableTitle">
-  //             <span className="d-flex gap-2 align-items-center">
-  //               <i className="fa-solid fa-pause"></i>
-  //               <span className="fs-6">Start Date</span>
-  //             </span>
-  //             <span className="d-flex gap-2 align-items-center">
-  //               <i className="fa-solid fa-arrow-down-wide-short"></i>
-  //               <span className="fs-6">Filters</span>
-  //             </span>
-  //             <span className="d-flex gap-2 align-items-center">
-  //               <i className="fa-solid fa-bars"></i>
-  //               <span className="fs-6">EndDate</span>
-  //             </span>
-  //             <span className="d-flex gap-2 align-items-center">
-  //               <span className="fs-6 exportExcel">
-  //                 <ExportToExcelButton
-  //                   filename="exported_data"
-  //                   sheetname="Sheet 1"
-  //                   data={rows}
-  //                 />{" "}
-  //               </span>
-  //             </span>
-  //           </div>
-  //         </Typography>
-  //       )}
+    return (
+      <Toolbar
+        sx={{
+       
+          pl: { sm: 2 },
+          pr: { xs: 1, sm: 1 },
+          ...(numSelected > 0 && {
+            bgcolor: (theme) =>
+              alpha(
+                theme.palette.primary.main,
+                theme.palette.action.activatedOpacity
+              ),
+          }),
+        }}
+      >
+        {numSelected > 0 ? (
+          <Typography
+            sx={{ flex: "1 1 100%" }}
+            color="inherit"
+            variant="subtitle1"
+            component="div"
+          >
+            {numSelected} selected
+          </Typography>
+        ) : (
+          <Typography
+            sx={{ flex: "0 1 100%" }}
+            variant="h2"
+            id="tableTitle"
+            component="div"
+          >
+          {/* //// */}
+          <SearchFormik rows={rows} setRows={setRows}/>
+         
+          </Typography>
+        )}
 
-  //       {numSelected > 0 && (
-  //         <Tooltip title="Delete">
-  //           <IconButton onClick={() => DeleteField(selected)}>
-  //             <DeleteIcon />
-  //           </IconButton>
-  //         </Tooltip>
-  //       )}
-  //     </Toolbar>
-  //   );
-  // }
-  // EnhancedTableToolbar.propTypes = {
-  //   numSelected: PropTypes.number.isRequired,
-  // };
+        {numSelected > 0 && (
+          <Tooltip title="Delete">
+            <IconButton onClick={() => DeleteField(selected)}>
+              <DeleteIcon />
+            </IconButton>
+          </Tooltip>
+        )}
+      </Toolbar>
+    );
+  }
+  EnhancedTableToolbar.propTypes = {
+    numSelected: PropTypes.number.isRequired,
+  };
+
   // body ----------------
   return (
     <Paper sx={{ width: "100%", mb: 0 }} className="BasicTableParent">
-      <div className=" p-3 d-flex justify-content-end">
+      <div className=" d-flex align-items-center gap-2 p-3 d-flex justify-content-end ">
+        <span className="d-flex gap-2 align-items-center">
+          <span className="fs-6 exportExcel">
+          <ExportDropDown rows={rows} sub={sub}/>
+        {" "}
+          </span>
+        </span>
+        <ImportExcel />
         <SearchText list={row} />
-        {/* <FilterBtn /> */}
       </div>
-
-      {/* <EnhancedTableToolbar numSelected={selected.length} /> */}
+      <EnhancedTableToolbar numSelected={selected.length} />
       <TableContainer>
         <Table sx={{ minWidth: 650 }} aria-labelledby="tableTitle">
           <EnhancedTableHead
-            numSelected={selected?.length}
+            numSelected={selected.length}
             order={order}
             orderBy={orderBy}
             onSelectAllClick={handleSelectAllClick}
             onRequestSort={handleRequestSort}
-            rowCount={rows?.length}
+            rowCount={rows.length}
           />
           <TableBody>
-            {visibleRows?.map((row, index) => {
+            {visibleRows.map((row, index) => {
               const isItemSelected = isSelected(row.ID);
               const labelId = `enhanced-table-checkbox-${index}`;
-if(row.data.length){
               return (
                 <TableRow
                   hover
-                  // onClick={(event) => handleClick(event, row.ID)}
+                  onClick={(event) => handleClick(event, row.ID)}
                   role="checkbox"
                   aria-checked={isItemSelected}
                   tabIndex={-1}
                   key={`${row.ID}-${index}`}
                   selected={isItemSelected}
-                  className="two"
                   sx={{ cursor: "pointer" }}
                 >
-                  <TableCell align="left" className="TabelCoulmTeams">
-                    {row.name}
+                  <TableCell padding="checkbox">
+                    <Checkbox
+                      color="primary"
+                      checked={isItemSelected}
+                      inputProps={{
+                        "aria-labelledby": labelId,
+                      }}
+                    />
                   </TableCell>
-                  <TableCell align="left" className="TabelCoulmTeams">
-                    {row.data.length}
+
+                  <TableCell
+                    component="th"
+                    id={labelId}
+                    scope="row"
+                    padding="none"
+                    onClick={() =>
+                      navigate(`/app/subscribers/${row.Id}/${row.ID}`)
+                    }
+                  >
+                    {row.Id}
                   </TableCell>
-                  <TableCell align="left" className="TabelCoulmTeams">
-             <button  className="btn btn-outline-primary p-2 rounded rounded-2" onClick={()=>navigate('/app/MyEvents',{state:row})} >
-             GO TO MY EVENTS
-              </button>   
-                    
+                  <TableCell
+                    onClick={() =>
+                      navigate(`/app/subscribers/${row.Id}/${row.ID}`)
+                    }
+                    align="left"
+                  >
+                    {row.EventName}
+                  </TableCell>
+                  <TableCell
+                    onClick={() =>
+                      navigate(`/app/subscribers/${row.Id}/${row.ID}`)
+                    }
+                    align="left"
+                  >
+                    {row.CostperDelegate}
+                  </TableCell>
+                  <TableCell
+                    onClick={() =>
+                      navigate(`/app/subscribers/${row.Id}/${row.ID}`)
+                    }
+                    align="left"
+                  >
+                    {row.EventCost}
+                  </TableCell>
+                  <TableCell
+                    onClick={() =>
+                      navigate(`/app/subscribers/${row.Id}/${row.ID}`)
+                    }
+                    align="left"
+                  >
+                    {row.StartDate}
+                  </TableCell>
+                  <TableCell
+                    onClick={() =>
+                      navigate(`/app/subscribers/${row.Id}/${row.ID}`)
+                    }
+                    align="left"
+                  >
+                    {row.CreatedAt}
+                  </TableCell>
+                  <TableCell
+                    onClick={() =>
+                      navigate(`/app/subscribers/${row.Id}/${row.ID}`)
+                    }
+                    align="left"
+                  >
+                    <span
+                      className={`${statusCase(
+                        row.Status
+                      )} text-white p-2 rounded `}
+                    >
+                      {row.Status}
+                    </span>
                   </TableCell>
                 </TableRow>
-              )}
+              );
             })}
-            
             {emptyRows > 0 && (
               <TableRow>
                 <TableCell colSpan={6} />

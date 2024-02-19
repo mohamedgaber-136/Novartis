@@ -29,8 +29,6 @@ import {
   serverTimestamp,
   getDoc,
   setDoc,
-  collection,
-  getDocs,
 } from "firebase/firestore";
 import SearchText from "../SearchText/SearchText";
 import ImportExcel from "../ImportExcel/ImportExcel";

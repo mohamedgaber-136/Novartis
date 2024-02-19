@@ -17,13 +17,10 @@ export const Events = () => {
 
   useEffect(() => {
     // query to filter evemts according to role
-
     console.log(eventsQueryRole, "Events query role");
     // if (eventsQueryRole) {
       console.log(eventsQueryRole, "Events query role");
-
       getData(EventRefrence, setInformations);
-
       const fetchData = async () => {
         // const eventObj = await getDocs(EventRefrence);
         const eventObj = await getDocs(EventRefrence);
@@ -39,12 +36,12 @@ export const Events = () => {
           }));
           mainDocData["Team"] = subData;
           return mainDocData;
+          console.log(mainDocData)
         });
         setCombinedData(eventObj);
       // };
-
-      fetchData();
     }
+    fetchData();
   }, []);
 
   useEffect(() => {
@@ -54,7 +51,6 @@ export const Events = () => {
     }));
     setSub(x);
   }, [combinedData]);
-  console.log(sub, "combined");
 
   // Fetch data from the main collection
   // const mainCollectionSnapshot = await collection(database,'Event').get();

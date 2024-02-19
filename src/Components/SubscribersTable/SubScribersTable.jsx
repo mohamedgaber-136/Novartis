@@ -70,7 +70,6 @@ export default function SubScribersTable({ rows, refCollection }) {
       ? (a, b) => descendingComparator(a, b, orderBy)
       : (a, b) => -descendingComparator(a, b, orderBy);
   }
-  console.log('hi')
   function stableSort(array, comparator) {
     const stabilizedThis = array?.map((el, index) => [el, index]);
     stabilizedThis?.sort((a, b) => {
