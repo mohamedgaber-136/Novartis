@@ -31,6 +31,8 @@ import {
   setDoc,
   query,
   where,
+  collection,
+  getDocs,
 } from "firebase/firestore";
 import SearchText from "../SearchText/SearchText";
 import ImportExcel from "../ImportExcel/ImportExcel";
@@ -273,13 +275,17 @@ export default function DataTable({ row, sub }) {
             timing: serverTimestamp(),
             ...info.data(),
           });
+
+          const notifyQuery = query(
+            collection(database, "notifications"),
+            where("NewEventID", "==", item)
+          );
+          await getDocs(notifyQuery).then(async (snapshot) => {
+            snapshot.docs.map(async (item) => {
+              await deleteDoc(doc(database, "notifications", item.id));
+            });
+          });
           await deleteDoc(ref);
-          // const notifyQuery = query(
-            
-          //   where("NewEventID", "==", item)
-          // );
-          // console.log(item, "query");
-          // await deleteDoc(notifyQuery);
         });
       }
     });

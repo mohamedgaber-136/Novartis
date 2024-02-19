@@ -1,8 +1,9 @@
-import * as React from "react";
+import React from "react";
 import { useSnackbar } from "@mui/base/useSnackbar";
 import { ClickAwayListener } from "@mui/base/ClickAwayListener";
 import { css, keyframes, styled } from "@mui/system";
 import styles from "./SnackBarItem.module.css";
+import { useEffect } from "react";
 
 export default function SnackBarItem({
   snackBarConfig,
@@ -11,11 +12,22 @@ export default function SnackBarItem({
   // setIsOpenSnackBar,
   // message,
 }) {
+  // console.log(setSnackBarConfig, "config");
   // const [open, setOpen] = React.useState(false);
+
+  // useEffect(() => {
+  //   let interval = null;
+  //   if (snackBarConfig.open) {
+  //     interval = setTimeout(() => {
+  //       setSnackBarConfig({ open: false });
+  //     }, 3000);
+  //   }
+  //   return clearTimeout(interval);
+  // }, [snackBarConfig]);
 
   const handleClose = () => {
     // setOpen(false);
-    setSnackBarConfig({ ...snackBarConfig, open: false });
+    setSnackBarConfig({ open: false });
   };
   const { getRootProps, onClickAway } = useSnackbar({
     onClose: handleClose,

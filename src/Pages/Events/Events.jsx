@@ -8,8 +8,10 @@ export const Events = () => {
     events,
     getData,
     setEvents,
-    eventsQueryRole,
+    // eventsQueryRole,
     EventRefrence,
+    currentUserRole,
+    eventsQueryAccordingToUserRole,
   } = useContext(FireBaseContext);
   const [informations, setInformations] = useState([]);
   const [sub, setSub] = useState([]);
@@ -17,32 +19,31 @@ export const Events = () => {
 
   useEffect(() => {
     // query to filter evemts according to role
-    console.log(eventsQueryRole, "Events query role");
-    // if (eventsQueryRole) {
-      console.log(eventsQueryRole, "Events query role");
-      getData(EventRefrence, setInformations);
+    console.log(eventsQueryAccordingToUserRole(), "Events query role");
+    if (currentUserRole) {
+      getData(eventsQueryAccordingToUserRole(), setInformations);
       const fetchData = async () => {
         // const eventObj = await getDocs(EventRefrence);
-        const eventObj = await getDocs(EventRefrence);
+        const eventObj = await getDocs(eventsQueryAccordingToUserRole());
         console.log(eventObj, "eventObj");
-        const EventDetails = eventObj.docs.map(async (maidDoc) => {
-          const mainDocData = { id: maidDoc.id, ...maidDoc.data() };
-          const ref = doc(EventRefrence, maidDoc.id);
-          const infoCollection = collection(ref, "Subscribers");
-          const subObj = await getDocs(infoCollection);
-          const subData = subObj.docs.map((subDoc) => ({
-            id: subDoc.id,
-            ...subDoc.data(),
-          }));
-          mainDocData["Team"] = subData;
-          return mainDocData;
-          console.log(mainDocData)
-        });
+        // const EventDetails = eventObj.docs.map(async (maidDoc) => {
+        //   const mainDocData = { id: maidDoc.id, ...maidDoc.data() };
+        //   const ref = doc(EventRefrence, maidDoc.id);
+        //   const infoCollection = collection(ref, "Subscribers");
+        //   const subObj = await getDocs(infoCollection);
+        //   const subData = subObj.docs.map((subDoc) => ({
+        //     id: subDoc.id,
+        //     ...subDoc.data(),
+        //   }));
+        //   mainDocData["Team"] = subData;
+        //   return mainDocData;
+        //   console.log(mainDocData)
+        // });
         setCombinedData(eventObj);
-      // };
+      };
+      fetchData();
     }
-    fetchData();
-  }, []);
+  }, [currentUserRole]);
 
   useEffect(() => {
     let x = combinedData.docs?.map((item) => ({
@@ -110,7 +111,7 @@ export const Events = () => {
           const eventSubscribersCollec = collection(data, "Subscribers");
           const subNm = await getDocs(eventSubscribersCollec);
           const NumberOfSubScribers = subNm.docs.length;
-          const cost = item.CostperDelegate;
+          // const cost = item.CostperDelegate;
           const EndTime = new Date(item.EndDate).getTime();
           const StartTime = new Date(item.StartDate).getTime();
           if (StartTime > date) {

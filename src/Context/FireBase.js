@@ -27,7 +27,7 @@ const FireBaseContextProvider = ({ children }) => {
   const [Subscribers, setSubscribers] = useState([]);
   const [roleCondition, setRole] = useState("");
   const [currentUserRole, setCurrentUserRole] = useState("");
-  const [eventsQueryRole, setEventsQueryRole] = useState(null);
+  // const [eventsQueryRole, setEventsQueryRole] = useState(null);
   const [newEvent, setNewEvent] = useState({
     EventName: "",
     CostperDelegate: "",
@@ -79,32 +79,40 @@ const FireBaseContextProvider = ({ children }) => {
   };
   const [currentUsr, setCurrentUser] = useState();
   const [loading, setLoading] = useState(true);
-  const eventsQueryAccordingToUserRole = (userRole, userID) => {
-    console.log(userID, "userID");
-    console.log(userRole, "userRole");
-    console.log(userRole.toLowerCase().includes("admin"), "userRole");
-    console.log(userRole.toLowerCase().includes("admin manager"), "userRole");
-    console.log(userRole.toLowerCase().includes("franchise"), "userRole");
+
+  const eventsQueryAccordingToUserRole = () => {
+    console.log(currentUsr, currentUserRole, "user");
     switch (true) {
       // const options = ["Brand Manager", {label:"Franchise Manager",
       // options:['10','30']
       // }, "Franchise User"];
 
-      case userRole.toLowerCase().includes("brand manager"): {
+      case currentUserRole.toLowerCase().includes("brand manager"): {
         console.log("currentUserRole admin case");
-        setEventsQueryRole(query(EventRefrence));
+        // setEventsQueryRole(query(EventRefrence));
+        return query(EventRefrence);
         break;
       }
-      case userRole.toLowerCase().includes("franchise manager"): {
+      case currentUserRole.toLowerCase().includes("franchise manager"): {
         console.log("currentUserRole franchise manager case");
-        const franchiseType = userRole.split("-")[1];
+        const franchiseType = currentUserRole.split("-")[1];
         console.log(franchiseType, "franchise manager case");
-        setEventsQueryRole(
-          query(EventRefrence, where("Franchise", "==", Number(franchiseType)))
+        // setEventsQueryRole(
+        //   query(EventRefrence, where("Franchise", "==", franchiseType))
+        // );
+        console.log(
+          query(EventRefrence, where("Franchise", "==", franchiseType)),
+          "query"
         );
+        return query(EventRefrence, where("Franchise", "==", franchiseType));
         break;
       }
-      default:
+      case currentUserRole.toLowerCase().includes("franchise user"): {
+        console.log("currentUserRole user case");
+        // setEventsQueryRole(query(EventRefrence));
+        return query(EventRefrence, where("CreatedByID", "==", currentUsr));
+        break;
+      }
     }
   };
 
@@ -123,7 +131,7 @@ const FireBaseContextProvider = ({ children }) => {
         const finaleUser = await getDoc(users);
         console.log(finaleUser.data(), "finaleUser");
         setCurrentUserRole(finaleUser.data().Role);
-        eventsQueryAccordingToUserRole(finaleUser.data().Role, user.uid);
+        // eventsQueryAccordingToUserRole(finaleUser.data().Role, user.uid);
 
         localStorage.setItem("REF", JSON.stringify(finaleUser.data().Role));
         localStorage.setItem("User", JSON.stringify(finaleUser.data()));
@@ -139,11 +147,18 @@ const FireBaseContextProvider = ({ children }) => {
     };
   }, []);
 
+  // useEffect(() => {
+  //   console.log("hello world");
+  //   if (currentUsr && currentUserRole) {
+  //     eventsQueryAccordingToUserRole(currentUserRole, currentUsr);
+  //   }
+  // }, [currentUsr, currentUserRole]);
+
   const saveNotificationToFirebase = async (notifyID) => {
     const currentUserName = await getDoc(doc(database, "Users", currentUsr));
     const newNotificationObj = {
       EventName: newEvent.EventName,
-      TimeStamp: new Date().toLocaleString(),
+      TimeStamp: new Date().getTime(),
       EventID: newEvent.Id,
       NewEventID: notifyID,
       CreatedAt: newEvent.CreatedAt,
@@ -232,8 +247,8 @@ const FireBaseContextProvider = ({ children }) => {
         // setEventsListDataAccordingToUserRole,
         UserRef,
 
-        // eventsQueryAccordingToUserRole,
-        eventsQueryRole,
+        eventsQueryAccordingToUserRole,
+        // eventsQueryRole,
         // setEventsListDataAccordingToUserRole,
       }}
     >

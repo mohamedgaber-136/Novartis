@@ -24,8 +24,9 @@ import SnackBarItem from "../SnackBarItem/SnackBarItem";
 
 export default function AlertBadge() {
   const navigation = useNavigate();
-  const { triggerNum, setTriggerNum, database, currentUsr } =
-    useContext(FireBaseContext);
+  const { triggerNum, setTriggerNum, database, currentUsr } = useContext(
+    FireBaseContext
+  );
   const [snackBarConfig, setSanckBarConfig] = useState({
     open: false,
     message: "",
@@ -50,10 +51,22 @@ export default function AlertBadge() {
       where("CreatedByID", "!=", currentUsr)
     );
     const unsubscribe = onSnapshot(notificationsQuery, (snapshot) => {
+      console.log(triggerNum, "triggerNum");
+
+      // setSanckBarConfig({ open: true, message: 'New Notification'});
+
       const newNotifications = snapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
       }));
+
+      // const timeStampDates = newNotifications.map((notify) => notify.TimeStamp);
+      // const foundDate = timeStampDates.find((date) => {
+      //   console.log(new Date().getTime(), "time");
+      //   return date == new Date().getTime();
+      // });
+      // console.log(timeStampDates.join(" - "), "dates");
+      // console.log(foundDate, "date found");
 
       const editedNotifications = newNotifications
         .sort((x, y) =>
@@ -61,7 +74,29 @@ export default function AlertBadge() {
             ? 1
             : -1
         )
-        .map((notify) => {
+        .map((notify, index) => {
+          if (index == 0) {
+            console.log(new Date(notify.TimeStamp));
+            console.log(new Date(notify.TimeStamp).getTime());
+            const currentDate = new Date().getTime();
+            console.log(new Date());
+            console.log(currentDate, "current");
+            // check if the notification created during 1000 milliseconds
+            if (
+              notify.TimeStamp <= currentDate &&
+              notify.TimeStamp >= currentDate - 10000 &&
+              !notify.isReadUsersID.find((item) => item == currentUsr)
+            ) {
+              console.log("New Notification");
+              setSanckBarConfig({
+                open: true,
+                message: "You have new notification",
+              });
+            }
+            // console.log(new Date("Mon Feb 19 2024 15:41:00").getTime(), "test");
+            // console.log(new Date("Mon Feb 19 2024 15:42:00").getTime(), "test");
+            // one minute == 60000 miliseconds
+          }
           const found = notify.isReadUsersID.find((item) => item == currentUsr);
           if (found) {
             return { ...notify, isRead: true };
@@ -69,6 +104,7 @@ export default function AlertBadge() {
           return { ...notify, isRead: false };
         });
       // sort notify
+      console.log(triggerNum, "triggerNum");
       setTriggerNum(
         editedNotifications.slice(0, 5).filter(({ isRead }) => isRead == false)
           .length
@@ -101,11 +137,14 @@ export default function AlertBadge() {
 
   // TODO: undefiened error
   // useEffect(() => {
-  //   if(triggerNum!==0)
-  //   {
-  //     //TODO: Add notification details
-  //     setSanckBarConfig({ open: true, message: 'New Notification'});
-  //   }
+  //   // if (notifications.length) {
+  //   //   const x = notifications.map((notify) => notify.CreatedAt);
+  //   //   console.log(x.join(" - "), "xxx");
+  //   // }
+  //   // if (triggerNum !== 0) {
+  //   //   //TODO: Add notification details
+  //   //   setSanckBarConfig({ open: true, message: "New Notification" });
+  //   // }
   // }, [triggerNum]);
 
   const [anchorEl, setAnchorEl] = useState(null);
@@ -152,7 +191,7 @@ export default function AlertBadge() {
 
       <SnackBarItem
         snackBarConfig={snackBarConfig}
-        setSanckBarConfig={setSanckBarConfig}
+        setSnackBarConfig={setSanckBarConfig}
       />
 
       {notifications.length !== 0 && (
