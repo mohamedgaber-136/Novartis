@@ -27,11 +27,6 @@ export const Profile = () => {
       defaultValue:Current?.Email,
       type: "text",
     },
-    // {
-    //   label: "Password",
-    //   defaultValue: Current?.Password,
-    //   type: "password",
-    // },
   ];
   console.log(currentUsr)
 const handleSubmit = (e)=>{
