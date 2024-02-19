@@ -3,25 +3,29 @@ import BasicTable from "../../Components/BasicTable/BasicTable";
 import { WeekEeventsCard } from "../../Components/WeekEventsCard/WeekEeventsCard";
 import "./Dashboard.css";
 import { FireBaseContext } from "../../Context/FireBase";
+import { query } from "firebase/firestore";
 
 export const Dashboard = () => {
-  const WeeksInfo = [
-    {
-      times: "2 ",
-      calen: "Today",
-      color: "#FFc100",
-    },
-    {
-      times: "10 ",
-      calen: "Week",
-      color: "#F1606B",
-    },
-    {
-      times: "10 ",
-      calen: "Month",
-      color: "#0460a9",
-    },
-  ];
+const [WeeksInfo,setWeeksInfo]=useState([
+  {
+    times: day,
+    calen: "Today",
+    color: "#FFc100",
+  },
+  {
+    times: "10 ",
+    calen: "Week",
+    color: "#F1606B",
+  },
+  {
+    times: "10 ",
+    calen: "Month",
+    color: "#0460a9",
+  },
+])
+const [day,setDays]=useState(0)
+const [Weeks,setWeeks]=useState(0)
+const [Months,setMonths]=useState(0)
   const { getData, EventRefrence, eventsQueryRole } = useContext(
     FireBaseContext
   );
@@ -41,7 +45,7 @@ export const Dashboard = () => {
       // setEventsAccordingToRole([...setEventsListDataAccordingToUserRole(data)]);
     }
   }, [data]);
-
+console.log(day)
   return (
     <div className="d-flex flex-column gap-4 align-items-start ">
       {/* <Notification/> */}
@@ -62,8 +66,7 @@ export const Dashboard = () => {
             </div>
             <div className="w-100">
               <h2 className="mt-3 text-secondary">Events</h2>
-              {/* <BasicTable rows={data} /> */}
-              <BasicTable rows={eventsAccordingToRole} />
+              <BasicTable row={eventsAccordingToRole} setDays={setDays} setWeeks={setWeeks} setMonths={setMonths} />
             </div>
           </div>
         </div>

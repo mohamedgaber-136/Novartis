@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import * as XLSX from 'xlsx';
-
+import Button from '@mui/material/Button';
 
 const ExportToExcelButton = ({ data, filename, sheetname }) => {
   const extractData = data.map((item)=>({
@@ -35,7 +35,11 @@ const ExportToExcelButton = ({ data, filename, sheetname }) => {
   };
 
   return (
-   <i className="fa-solid fa-download" onClick={exportToExcel} ><span className='fs-6 fw-light'> </span> </i >
+
+      <Button   id="fade-button" className="d-flex flex-column "  onClick={exportToExcel}  >
+        <i className="fa-solid fa-file-arrow-up fs-4 darkBlue"></i>   
+        <span>export</span>
+    </Button>
   );
 };
 
