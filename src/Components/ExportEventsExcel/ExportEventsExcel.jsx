@@ -1,7 +1,5 @@
 import { useState } from 'react';
 import * as XLSX from 'xlsx';
-
-
 const ExportEventsExcel = ({ data, filename, sheetname }) => {
   const extractData = data.map((item)=>({
     'Event Name':item.EventName,

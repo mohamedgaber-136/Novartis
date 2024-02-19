@@ -6,6 +6,9 @@ import { FireBaseContext } from "../../Context/FireBase";
 import { query } from "firebase/firestore";
 
 export const Dashboard = () => {
+  const [day,setDays]=useState(0)
+  const [Weeks,setWeeks]=useState(0)
+  const [Months,setMonths]=useState(0)
 const [WeeksInfo,setWeeksInfo]=useState([
   {
     times: day,
@@ -13,19 +16,16 @@ const [WeeksInfo,setWeeksInfo]=useState([
     color: "#FFc100",
   },
   {
-    times: "10 ",
+    times: Weeks,
     calen: "Week",
     color: "#F1606B",
   },
   {
-    times: "10 ",
+    times: Months,
     calen: "Month",
     color: "#0460a9",
   },
 ])
-const [day,setDays]=useState(0)
-const [Weeks,setWeeks]=useState(0)
-const [Months,setMonths]=useState(0)
   const { getData, EventRefrence, eventsQueryRole } = useContext(
     FireBaseContext
   );
