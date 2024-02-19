@@ -9,6 +9,7 @@ import {
   getDoc,
   query,
   where,
+  addDoc,
 } from "firebase/firestore";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 export const FireBaseContext = createContext();
@@ -120,7 +121,7 @@ const FireBaseContextProvider = ({ children }) => {
         setCurrentUser(user.uid);
         const users = doc(UserRef, user.uid);
         const finaleUser = await getDoc(users);
-        console.log(finaleUser.data(),'finaleUser')
+        console.log(finaleUser.data(), "finaleUser");
         setCurrentUserRole(finaleUser.data().Role);
         eventsQueryAccordingToUserRole(finaleUser.data().Role, user.uid);
 
@@ -137,6 +138,21 @@ const FireBaseContextProvider = ({ children }) => {
       }
     };
   }, []);
+
+  const saveNotificationToFirebase = async (notifyID) => {
+    const currentUserName = await getDoc(doc(database, "Users", currentUsr));
+    const newNotificationObj = {
+      EventName: newEvent.EventName,
+      TimeStamp: new Date().toLocaleString(),
+      EventID: newEvent.Id,
+      NewEventID: notifyID,
+      CreatedAt: newEvent.CreatedAt,
+      CreatedBy: currentUserName.data().Name,
+      CreatedByID: currentUsr,
+      isReadUsersID: [],
+    };
+    await addDoc(collection(database, "notifications"), newNotificationObj);
+  };
 
   // useEffect(() => {
   //   eventsQueryAccordingToUserRole();
@@ -212,6 +228,7 @@ const FireBaseContextProvider = ({ children }) => {
         TeamsRefrence,
         currentUserRole,
         setCurrentUserRole,
+        saveNotificationToFirebase,
         // setEventsListDataAccordingToUserRole,
         UserRef,
 
