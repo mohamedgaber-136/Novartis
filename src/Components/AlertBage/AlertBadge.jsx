@@ -60,14 +60,6 @@ export default function AlertBadge() {
         ...doc.data(),
       }));
 
-      // const timeStampDates = newNotifications.map((notify) => notify.TimeStamp);
-      // const foundDate = timeStampDates.find((date) => {
-      //   console.log(new Date().getTime(), "time");
-      //   return date == new Date().getTime();
-      // });
-      // console.log(timeStampDates.join(" - "), "dates");
-      // console.log(foundDate, "date found");
-
       const editedNotifications = newNotifications
         .sort((x, y) =>
           new Date(x.CreatedAt).getTime() < new Date(y.CreatedAt).getTime()
@@ -110,42 +102,148 @@ export default function AlertBadge() {
           .length
       );
 
-      setNotifications([
-        ...editedNotifications,
-        // .filter((item) => item.isRead == false)
-        // .sort((x, y) => {
-        //   if (
-        //     new Date(x.CreatedAt).getTime() <
-        //     new Date(y.CreatedAt).getTime()
-        //   ) {
-        //     return 1;
-        //   }
-        //   if (
-        //     new Date(x.CreatedAt).getTime() >
-        //     new Date(y.CreatedAt).getTime()
-        //   ) {
-        //     return -1;
-        //   }
-        //   return 0;
-        // }),
-      ]);
+      setNotifications([...editedNotifications]);
     });
 
     // Clean up the listener when the component unmounts
     return () => unsubscribe();
   }, []); // Empty dependency array means this effect runs once when the component mounts
 
-  // TODO: undefiened error
-  // useEffect(() => {
-  //   // if (notifications.length) {
-  //   //   const x = notifications.map((notify) => notify.CreatedAt);
-  //   //   console.log(x.join(" - "), "xxx");
-  //   // }
-  //   // if (triggerNum !== 0) {
-  //   //   //TODO: Add notification details
-  //   //   setSanckBarConfig({ open: true, message: "New Notification" });
-  //   // }
-  // }, [triggerNum]);
+  // if (currentUserRole.toLowerCase().includes("manager")) {
+  //   const notificationsQuery = query(
+  //     collection(database, "notifications"),
+  //     where("CreatedByID", "!=", currentUsr)
+  //   );
+  //   const unsubscribe = onSnapshot(notificationsQuery, async (snapshot) => {
+  //     console.log(triggerNum, "triggerNum");
+
+  //     let newNotifications = [];
+
+  //     if (currentUserRole.toLowerCase().includes("franchise")) {
+  //       const holder = [];
+  //       snapshot.docs.map(async (docItem) => {
+  //         const franchiseType = currentUserRole.split("-")[1];
+  //         const event = await getDoc(
+  //           doc(EventRefrence, docItem.data().NewEventID)
+  //         );
+  //         console.log(event.data(), "EventRefrence");
+
+  //         if (event.Franchise == franchiseType) {
+  //           holder.push({
+  //             id: docItem.id,
+  //             ...docItem.data(),
+  //           });
+  //           // return {
+  //           //   id: docItem.id,
+  //           //   ...docItem.data(),
+  //           // };
+  //         }
+  //       });
+
+  //       newNotifications = [...holder];
+  //     } else {
+  //       newNotifications = snapshot.docs.map(async (docItem) => ({
+  //         id: docItem.id,
+  //         ...docItem.data(),
+  //       }));
+  //     }
+
+  //     // const newNotifications = await Promise.all(
+  //     //   snapshot.docs.map(async (docItem) => {
+  //     //     if (currentUserRole.toLowerCase().includes("franchise")) {
+  //     //       const franchiseType = currentUserRole.split("-")[1];
+  //     //       console.log(franchiseType, "franchiseType notify");
+  //     //       const event = await getDoc(
+  //     //         doc(EventRefrence, docItem.data().NewEventID)
+  //     //       );
+  //     //       console.log(event.data(), "EventRefrence");
+
+  //     //       if (event.Franchise == franchiseType) {
+  //     //         return {
+  //     //           id: docItem.id,
+  //     //           ...docItem.data(),
+  //     //         };
+  //     //       }
+  //     //     } else {
+  //     //       return {
+  //     //         id: docItem.id,
+  //     //         ...docItem.data(),
+  //     //       };
+  //     //     }
+  //     //     return null;
+  //     //   })
+  //     // );
+  //     console.log(newNotifications, "newNotifications");
+
+  //     const editedNotifications = newNotifications
+  //       .sort((x, y) =>
+  //         new Date(x.CreatedAt).getTime() < new Date(y.CreatedAt).getTime()
+  //           ? 1
+  //           : -1
+  //       )
+  //       .map((notify, index) => {
+  //         if (index == 0) {
+  //           console.log(new Date(notify.TimeStamp));
+  //           console.log(new Date(notify.TimeStamp).getTime());
+  //           const currentDate = new Date().getTime();
+  //           console.log(new Date());
+  //           console.log(currentDate, "current");
+  //           // check if the notification created during 1000 milliseconds
+  //           if (
+  //             notify.TimeStamp <= currentDate &&
+  //             notify.TimeStamp >= currentDate - 10000 &&
+  //             !notify.isReadUsersID.find((item) => item == currentUsr)
+  //           ) {
+  //             console.log("New Notification");
+  //             setSanckBarConfig({
+  //               open: true,
+  //               message: "You have new notification",
+  //             });
+  //           }
+  //           // console.log(new Date("Mon Feb 19 2024 15:41:00").getTime(), "test");
+  //           // console.log(new Date("Mon Feb 19 2024 15:42:00").getTime(), "test");
+  //           // one minute == 60000 miliseconds
+  //         }
+  //         const found = notify.isReadUsersID.find(
+  //           (item) => item == currentUsr
+  //         );
+  //         if (found) {
+  //           return { ...notify, isRead: true };
+  //         }
+  //         return { ...notify, isRead: false };
+  //       });
+  //     // sort notify
+  //     console.log(triggerNum, "triggerNum");
+  //     setTriggerNum(
+  //       editedNotifications
+  //         .slice(0, 5)
+  //         .filter(({ isRead }) => isRead == false).length
+  //     );
+
+  //     setNotifications([
+  //       ...editedNotifications,
+  //       // .filter((item) => item.isRead == false)
+  //       // .sort((x, y) => {
+  //       //   if (
+  //       //     new Date(x.CreatedAt).getTime() <
+  //       //     new Date(y.CreatedAt).getTime()
+  //       //   ) {
+  //       //     return 1;
+  //       //   }
+  //       //   if (
+  //       //     new Date(x.CreatedAt).getTime() >
+  //       //     new Date(y.CreatedAt).getTime()
+  //       //   ) {
+  //       //     return -1;
+  //       //   }
+  //       //   return 0;
+  //       // }),
+  //     ]);
+  //   });
+
+  //   // Clean up the listener when the component unmounts
+  //   return () => unsubscribe();
+  // }
 
   const [anchorEl, setAnchorEl] = useState(null);
 
