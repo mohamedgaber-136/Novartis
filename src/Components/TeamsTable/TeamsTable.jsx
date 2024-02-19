@@ -280,7 +280,6 @@ export default function TeamsTable({ row }) {
   return (
     <Paper sx={{ width: "100%", mb: 0 }} className="BasicTableParent">
       <div className=" p-3 d-flex justify-content-end">
-        <SearchText list={row} />
       </div>
 
       <TableContainer>

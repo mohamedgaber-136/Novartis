@@ -49,8 +49,6 @@ const ExportSfda = ({ data, filename, sheetname }) => {
       })
     );
 
-    console.log(finalDataToExport, "finalDataToExport");
-
     // Add headers
     const headersList = [
       "Event Name",
