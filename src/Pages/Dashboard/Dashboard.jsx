@@ -45,10 +45,8 @@ const [Months,setMonths]=useState(0)
       // setEventsAccordingToRole([...setEventsListDataAccordingToUserRole(data)]);
     }
   }, [data]);
-console.log(day)
   return (
     <div className="d-flex flex-column gap-4 align-items-start ">
-      {/* <Notification/> */}
       <div className="container">
         <h2 className="my-3">Hi , {(JSON.parse(localStorage.getItem('User'))).Name}</h2>
         <div className="d-flex  justify-content-between align-item-center w-100">
