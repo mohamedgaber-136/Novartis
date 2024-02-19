@@ -34,7 +34,7 @@ export default function EventsDeletedTable() {
       delete data[keyToDelete];
       delete data[keyToDeleteTwo];
       await setDoc(doc(EventRefrence, id), data);
-      // saveNotificationToFirebase(id);
+      saveNotificationToFirebase(id);
       await deleteDoc(ref);
     } else {
       console.log(`Key '${keyToDelete}' does not exist in the document.`);
