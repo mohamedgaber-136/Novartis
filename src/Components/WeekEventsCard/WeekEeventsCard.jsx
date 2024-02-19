@@ -1,5 +1,5 @@
 import './WeekCard.css'
-export const WeekEeventsCard = ({info,color,calen,num}) => {
+export const WeekEeventsCard = ({color,calen,num}) => {
   return (
     <div className='WeekEeventsCard flex-column gap-1 gap-md-2 flex-wrap flex-md-row d-flex justify-content-center align-items-center' style={{backgroundColor:`${color}`}}>
         <div  ><h3 className='text-white m-0 fw-bold '>{num}</h3></div>

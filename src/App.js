@@ -5,7 +5,6 @@ function App() {
   return (
     <div className="AppContent">
       <Outlet/>
-      {/* <MainContent/> */}
     </div>
   );
 }

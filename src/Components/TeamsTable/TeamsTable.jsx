@@ -26,18 +26,17 @@ import ExportToExcelButton from "../ExportBtn/ExportToExcelButton";
 import { useNavigate } from "react-router-dom";
 import { deleteDoc, doc } from "firebase/firestore";
 import SearchText from "../SearchText/SearchText";
-export default function TeamsTable({ row}) {
+export default function TeamsTable({ row }) {
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("calories");
   const [selected, setSelected] = React.useState([]);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
-  const { EventRefrence  } = React.useContext(FireBaseContext);
-  const [rows,setRows] = React.useState([])
-  const navigate =useNavigate()
+  const { EventRefrence } = React.useContext(FireBaseContext);
+  const [rows, setRows] = React.useState([]);
+  const navigate = useNavigate();
   React.useEffect(() => {
-  setRows(row);
-
+    setRows(row);
   }, [row]);
   function descendingComparator(a, b, orderBy) {
     if (b[orderBy] < a[orderBy]) {
@@ -282,10 +281,8 @@ export default function TeamsTable({ row}) {
     <Paper sx={{ width: "100%", mb: 0 }} className="BasicTableParent">
       <div className=" p-3 d-flex justify-content-end">
         <SearchText list={row} />
-        {/* <FilterBtn /> */}
       </div>
 
-      {/* <EnhancedTableToolbar numSelected={selected.length} /> */}
       <TableContainer>
         <Table sx={{ minWidth: 650 }} aria-labelledby="tableTitle">
           <EnhancedTableHead
@@ -300,35 +297,39 @@ export default function TeamsTable({ row}) {
             {visibleRows?.map((row, index) => {
               const isItemSelected = isSelected(row.ID);
               const labelId = `enhanced-table-checkbox-${index}`;
-if(row.data.length){
-              return (
-                <TableRow
-                  hover
-                  // onClick={(event) => handleClick(event, row.ID)}
-                  role="checkbox"
-                  aria-checked={isItemSelected}
-                  tabIndex={-1}
-                  key={`${row.ID}-${index}`}
-                  selected={isItemSelected}
-                  className="two"
-                  sx={{ cursor: "pointer" }}
-                >
-                  <TableCell align="left" className="TabelCoulmTeams">
-                    {row.name}
-                  </TableCell>
-                  <TableCell align="left" className="TabelCoulmTeams">
-                    {row.data.length}
-                  </TableCell>
-                  <TableCell align="left" className="TabelCoulmTeams">
-             <button  className="btn btn-outline-primary p-2 rounded rounded-2" onClick={()=>navigate('/app/MyEvents',{state:row})} >
-             GO TO MY EVENTS
-              </button>   
-                    
-                  </TableCell>
-                </TableRow>
-              )}
+              if (row.data.length) {
+                return (
+                  <TableRow
+                    hover
+                    role="checkbox"
+                    aria-checked={isItemSelected}
+                    tabIndex={-1}
+                    key={`${row.ID}-${index}`}
+                    selected={isItemSelected}
+                    className="two"
+                    sx={{ cursor: "pointer" }}
+                  >
+                    <TableCell align="left" className="TabelCoulmTeams">
+                      {row.name}
+                    </TableCell>
+                    <TableCell align="left" className="TabelCoulmTeams">
+                      {row.data.length}
+                    </TableCell>
+                    <TableCell align="left" className="TabelCoulmTeams">
+                      <button
+                        className="btn btn-outline-primary p-2 rounded rounded-2"
+                        onClick={() =>
+                          navigate("/app/MyEvents", { state: row })
+                        }
+                      >
+                        GO TO MY EVENTS
+                      </button>
+                    </TableCell>
+                  </TableRow>
+                );
+              }
             })}
-            
+
             {emptyRows > 0 && (
               <TableRow>
                 <TableCell colSpan={6} />

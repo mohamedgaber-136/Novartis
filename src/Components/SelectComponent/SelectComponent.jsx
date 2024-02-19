@@ -2,8 +2,7 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import { useState } from 'react';
-export const SelectComponent = () => {
-    const [date, setdate] = useState('This Month')
+export const SelectComponent = ({setdate,date}) => {
   const handleChange = (event) => {
     setdate(event.target.value);
   };
