@@ -27,8 +27,9 @@ export default function NewEvent() {
     setId,
     currentUsr,
     database,
+    saveNotificationToFirebase
   } = useContext(FireBaseContext);
-  const { setAccpetAll, AccpetAllTermss } = useContext(SearchContext);
+  const { setAccpetAll, AccpetAllTermss, } = useContext(SearchContext);
   const [skipped, setSkipped] = useState(new Set());
   const [open, setOpen] = useState(true);
   const steps = [
@@ -112,23 +113,9 @@ export default function NewEvent() {
     });
     await addDoc(EventRefrence, { ...newEvent, CreatedByID: currentUsr }).then(
       async (snapshot) => {
-        const currentUserName = await getDoc(
-          doc(database, "Users", currentUsr)
-        );
+     
 
-        const newNotificationObj = {
-          EventName: newEvent.EventName,
-          TimeStamp: new Date().toLocaleString(),
-          EventID: newEvent.Id,
-          NewEventID: snapshot.id,
-          CreatedAt: newEvent.CreatedAt,
-          CreatedBy: currentUserName.data().Name
-            ? currentUserName.data().Name
-            : "Admin",
-          CreatedByID: currentUsr,
-          isReadUsersID: [],
-        };
-        await addDoc(collection(database, "notifications"), newNotificationObj);
+       saveNotificationToFirebase(snapshot.id,)
       }
     );
 

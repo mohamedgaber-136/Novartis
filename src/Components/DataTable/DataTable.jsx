@@ -20,7 +20,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { visuallyHidden } from "@mui/utils";
 import swal from "sweetalert";
 import { FireBaseContext } from "../../Context/FireBase";
-import ExportDropDown from '../ExportDropDown/ExportDropDown'
+import ExportDropDown from "../ExportDropDown/ExportDropDown";
 import "./DataTable.css";
 import { useNavigate } from "react-router-dom";
 import {
@@ -29,19 +29,25 @@ import {
   serverTimestamp,
   getDoc,
   setDoc,
+  query,
+  where,
 } from "firebase/firestore";
 import SearchText from "../SearchText/SearchText";
 import ImportExcel from "../ImportExcel/ImportExcel";
 import { SearchFormik } from "../SearchFormik/SearchFormik";
-export default function DataTable({ row,sub }) {
+export default function DataTable({ row, sub }) {
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("calories");
   const [selected, setSelected] = React.useState([]);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
-  const { EventRefrence, EventsDeletedRef, rows, setRows } = React.useContext(
-    FireBaseContext
-  );
+  const {
+    EventRefrence,
+    EventsDeletedRef,
+    rows,
+    setRows,
+    database,
+  } = React.useContext(FireBaseContext);
   const navigate = useNavigate();
   function descendingComparator(a, b, orderBy) {
     if (b[orderBy] < a[orderBy]) {
@@ -268,6 +274,12 @@ export default function DataTable({ row,sub }) {
             ...info.data(),
           });
           await deleteDoc(ref);
+          // const notifyQuery = query(
+            
+          //   where("NewEventID", "==", item)
+          // );
+          // console.log(item, "query");
+          // await deleteDoc(notifyQuery);
         });
       }
     });
@@ -279,7 +291,6 @@ export default function DataTable({ row,sub }) {
     return (
       <Toolbar
         sx={{
-       
           pl: { sm: 2 },
           pr: { xs: 1, sm: 1 },
           ...(numSelected > 0 && {
@@ -307,9 +318,8 @@ export default function DataTable({ row,sub }) {
             id="tableTitle"
             component="div"
           >
-          {/* //// */}
-          <SearchFormik rows={rows} setRows={setRows}/>
-         
+            {/* //// */}
+            <SearchFormik rows={rows} setRows={setRows} />
           </Typography>
         )}
 
@@ -333,8 +343,7 @@ export default function DataTable({ row,sub }) {
       <div className=" d-flex align-items-center gap-2 p-3 d-flex justify-content-end ">
         <span className="d-flex gap-2 align-items-center">
           <span className="fs-6 exportExcel">
-          <ExportDropDown rows={rows} sub={sub}/>
-        {" "}
+            <ExportDropDown rows={rows} sub={sub} />{" "}
           </span>
         </span>
         <ImportExcel />
